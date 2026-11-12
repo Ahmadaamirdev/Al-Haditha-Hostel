@@ -20,9 +20,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => 
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'employees', label: 'Employees', icon: Users },
     { id: 'allotments', label: 'Allotments', icon: CalendarCheck2 },
     { id: 'bootcamps', label: 'Bootcamps', icon: Building2 },
-    { id: 'employees', label: 'Employees', icon: Users },
     { id: 'notifications', label: 'Notifications', icon: Bell },
   ];
 
