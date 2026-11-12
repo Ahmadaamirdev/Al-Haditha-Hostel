@@ -25,7 +25,6 @@ const allotmentSchema = new Schema<IAllotment>(
       type: Schema.Types.ObjectId,
       ref: 'Employee',
       required: true,
-      index: true,
     },
     bootcampId: {
       type: Schema.Types.ObjectId,
@@ -37,7 +36,6 @@ const allotmentSchema = new Schema<IAllotment>(
       type: Schema.Types.ObjectId,
       ref: 'AllocationUnit',
       required: true,
-      index: true,
     },
     expectedCheckInDate: {
       type: Date,
