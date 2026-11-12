@@ -83,6 +83,12 @@ export const errorHandler = (
   }
 
   console.error('[Unhandled Server Error]:', err);
-  sendError(res, 'Internal server error', 500, 'INTERNAL_ERROR');
+  sendError(
+    res,
+    err?.message || 'Internal server error',
+    500,
+    'INTERNAL_ERROR',
+    process.env.NODE_ENV !== 'production' ? err?.stack : undefined
+  );
 };
 
