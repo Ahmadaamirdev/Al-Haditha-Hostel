@@ -31,7 +31,8 @@ export const createAllotmentSchema = z.object({
   body: z.object({
     employeeId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid Employee ID'),
     allocationUnitId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid Allocation Unit ID'),
-    expectedCheckInDate: z.string().datetime({ message: 'Invalid ISO date string' }),
+    checkInDate: z.string().datetime({ message: 'Invalid ISO date string' }).optional(),
+    expectedCheckInDate: z.string().datetime({ message: 'Invalid ISO date string' }).optional(),
     plannedStayDuration: z.number().int().min(1, 'Duration must be at least 1 day'),
     notes: z.string().optional(),
   }),

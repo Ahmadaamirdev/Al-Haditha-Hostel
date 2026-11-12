@@ -25,7 +25,8 @@ export class NotificationService {
     let overdueCount = 0;
 
     activeAllotments.forEach((allotment: any) => {
-      const expCheckout = new Date(allotment.expectedCheckoutDate);
+      const checkoutDateVal = allotment.checkoutDate || allotment.expectedCheckoutDate;
+      const expCheckout = new Date(checkoutDateVal);
       const expDateOnly = new Date(expCheckout.getFullYear(), expCheckout.getMonth(), expCheckout.getDate());
 
       const diffTime = expDateOnly.getTime() - todayStart.getTime();
@@ -40,8 +41,10 @@ export class NotificationService {
           employee: allotment.employeeId,
           bootcamp: allotment.bootcampId,
           unit: allotment.allocationUnitId,
-          expectedCheckoutDate: allotment.expectedCheckoutDate,
-          actualCheckInDate: allotment.actualCheckInDate,
+          checkoutDate: checkoutDateVal,
+          expectedCheckoutDate: checkoutDateVal,
+          checkInDate: allotment.checkInDate || allotment.actualCheckInDate || allotment.expectedCheckInDate,
+          actualCheckInDate: allotment.checkInDate || allotment.actualCheckInDate || allotment.expectedCheckInDate,
           daysOverdue: Math.abs(diffDays),
         });
       } else if (diffDays === 0) {
@@ -53,8 +56,10 @@ export class NotificationService {
           employee: allotment.employeeId,
           bootcamp: allotment.bootcampId,
           unit: allotment.allocationUnitId,
-          expectedCheckoutDate: allotment.expectedCheckoutDate,
-          actualCheckInDate: allotment.actualCheckInDate,
+          checkoutDate: checkoutDateVal,
+          expectedCheckoutDate: checkoutDateVal,
+          checkInDate: allotment.checkInDate || allotment.actualCheckInDate || allotment.expectedCheckInDate,
+          actualCheckInDate: allotment.checkInDate || allotment.actualCheckInDate || allotment.expectedCheckInDate,
           daysRemaining: 0,
         });
       } else if (diffDays <= NOTIFICATION_THRESHOLDS.UPCOMING_DAYS) {
@@ -66,8 +71,10 @@ export class NotificationService {
           employee: allotment.employeeId,
           bootcamp: allotment.bootcampId,
           unit: allotment.allocationUnitId,
-          expectedCheckoutDate: allotment.expectedCheckoutDate,
-          actualCheckInDate: allotment.actualCheckInDate,
+          checkoutDate: checkoutDateVal,
+          expectedCheckoutDate: checkoutDateVal,
+          checkInDate: allotment.checkInDate || allotment.actualCheckInDate || allotment.expectedCheckInDate,
+          actualCheckInDate: allotment.checkInDate || allotment.actualCheckInDate || allotment.expectedCheckInDate,
           daysRemaining: diffDays,
         });
       }

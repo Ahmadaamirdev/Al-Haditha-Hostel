@@ -73,9 +73,11 @@ export interface Allotment {
   employeeId: Employee;
   bootcampId: Bootcamp;
   allocationUnitId: AllocationUnit;
-  expectedCheckInDate: string;
+  checkInDate: string;
+  expectedCheckInDate?: string;
   plannedStayDuration: number;
-  expectedCheckoutDate: string;
+  checkoutDate: string;
+  expectedCheckoutDate?: string;
   actualCheckInDate?: string | null;
   actualCheckoutDate?: string | null;
   status: AllotmentStatus;
@@ -105,7 +107,9 @@ export interface NotificationItem {
     portionIdentifier?: string | null;
     bedIdentifier?: string | null;
   };
+  checkoutDate?: string;
   expectedCheckoutDate: string;
+  checkInDate?: string;
   actualCheckInDate?: string;
   daysRemaining?: number;
   daysOverdue?: number;

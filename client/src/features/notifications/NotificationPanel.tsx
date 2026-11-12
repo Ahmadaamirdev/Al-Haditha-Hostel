@@ -157,7 +157,7 @@ export const NotificationPanel: React.FC = () => {
                     </div>
 
                     <div className="text-slate-400 text-[11px] mt-0.5">
-                      Expected Departure: {formatDate(item.expectedCheckoutDate)}
+                      Departure Date: {formatDate(item.checkoutDate || item.expectedCheckoutDate)}
                     </div>
                   </div>
                 </div>

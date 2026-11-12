@@ -31,7 +31,7 @@ export const AllotmentList: React.FC = () => {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState('');
   const [availableUnits, setAvailableUnits] = useState<AllocationUnit[]>([]);
   const [selectedUnitId, setSelectedUnitId] = useState('');
-  const [expectedCheckInDate, setExpectedCheckInDate] = useState(
+  const [checkInDate, setCheckInDate] = useState(
     new Date().toISOString().split('T')[0]
   );
   const [plannedStayDuration, setPlannedStayDuration] = useState(7);
@@ -125,12 +125,14 @@ export const AllotmentList: React.FC = () => {
     e.preventDefault();
     setActionError(null);
     try {
+      const selectedDate = new Date(checkInDate).toISOString();
       await apiRequest('/allotments', {
         method: 'POST',
         body: JSON.stringify({
           employeeId: selectedEmployeeId,
           allocationUnitId: selectedUnitId,
-          expectedCheckInDate: new Date(expectedCheckInDate).toISOString(),
+          checkInDate: selectedDate,
+          expectedCheckInDate: selectedDate,
           plannedStayDuration: Number(plannedStayDuration),
           notes,
         }),
@@ -328,7 +330,7 @@ export const AllotmentList: React.FC = () => {
                       {item.plannedStayDuration} Days
                     </span>
                     <span className="block text-[10px] text-slate-400">
-                      Exp: {formatDate(item.expectedCheckoutDate)}
+                      Checkout: {formatDate(item.checkoutDate || item.expectedCheckoutDate)}
                     </span>
                   </td>
                   <td className="py-3.5 px-5">
@@ -473,13 +475,13 @@ export const AllotmentList: React.FC = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Expected Check-In Date *
+                    Check-In Date *
                   </label>
                   <input
                     type="date"
                     required
-                    value={expectedCheckInDate}
-                    onChange={(e) => setExpectedCheckInDate(e.target.value)}
+                    value={checkInDate}
+                    onChange={(e) => setCheckInDate(e.target.value)}
                     className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#00a651]"
                   />
                 </div>
@@ -544,8 +546,7 @@ export const AllotmentList: React.FC = () => {
             </p>
 
             <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-[#00a651]">
-              <strong>Approved Recalculation Rule Active:</strong> Expected checkout date will be
-              automatically recomputed as <em>Actual Check-In + Planned Stay Duration</em>.
+              <strong>Check-In Confirmation:</strong> Active stay duration is computed from the confirmed Check-In Date.
             </div>
 
             {actionError && (
@@ -557,7 +558,7 @@ export const AllotmentList: React.FC = () => {
             <form onSubmit={handleConfirmCheckIn} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Actual Check-In Date *
+                  Check-In Date *
                 </label>
                 <input
                   type="date"
@@ -607,7 +608,7 @@ export const AllotmentList: React.FC = () => {
             <form onSubmit={handleConfirmCheckOut} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Actual Check-Out Date *
+                  Checkout Date *
                 </label>
                 <input
                   type="date"

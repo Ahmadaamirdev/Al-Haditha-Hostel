@@ -5,10 +5,12 @@ export interface IAllotment extends Document {
   employeeId: Types.ObjectId;
   bootcampId: Types.ObjectId;
   allocationUnitId: Types.ObjectId;
-  expectedCheckInDate: Date;
-  plannedStayDuration: number;
-  expectedCheckoutDate: Date;
+  checkInDate: Date;
+  expectedCheckInDate?: Date;
   actualCheckInDate?: Date | null;
+  plannedStayDuration: number;
+  checkoutDate: Date;
+  expectedCheckoutDate?: Date;
   actualCheckoutDate?: Date | null;
   status: AllotmentStatus;
   createdById: Types.ObjectId;
@@ -37,22 +39,29 @@ const allotmentSchema = new Schema<IAllotment>(
       ref: 'AllocationUnit',
       required: true,
     },
-    expectedCheckInDate: {
+    checkInDate: {
       type: Date,
       required: true,
+    },
+    // Keep backward-compatible expectedCheckInDate virtual/alias
+    expectedCheckInDate: {
+      type: Date,
+    },
+    actualCheckInDate: {
+      type: Date,
     },
     plannedStayDuration: {
       type: Number,
       required: true,
       min: 1,
     },
-    expectedCheckoutDate: {
+    checkoutDate: {
       type: Date,
       required: true,
     },
-    actualCheckInDate: {
+    // Keep backward-compatible expectedCheckoutDate virtual/alias
+    expectedCheckoutDate: {
       type: Date,
-      default: null,
     },
     actualCheckoutDate: {
       type: Date,
@@ -62,7 +71,7 @@ const allotmentSchema = new Schema<IAllotment>(
       type: String,
       required: true,
       enum: Object.values(AllotmentStatus),
-      default: AllotmentStatus.PENDING,
+      default: AllotmentStatus.CHECKED_IN,
       index: true,
     },
     createdById: {

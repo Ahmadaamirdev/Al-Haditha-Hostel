@@ -27,7 +27,8 @@ export class AllotmentService {
   public static async createAllotment(data: {
     employeeId: string;
     allocationUnitId: string;
-    expectedCheckInDate: string;
+    checkInDate?: string;
+    expectedCheckInDate?: string;
     plannedStayDuration: number;
     createdById: string;
     notes?: string;
@@ -43,7 +44,8 @@ export class AllotmentService {
   private static async _createWithTransaction(data: {
     employeeId: string;
     allocationUnitId: string;
-    expectedCheckInDate: string;
+    checkInDate?: string;
+    expectedCheckInDate?: string;
     plannedStayDuration: number;
     createdById: string;
     notes?: string;
@@ -90,18 +92,21 @@ export class AllotmentService {
         );
       }
 
-      const expectedCheckIn = new Date(data.expectedCheckInDate);
-      const expectedCheckout = addDays(expectedCheckIn, data.plannedStayDuration);
+      const checkIn = new Date(data.checkInDate || data.expectedCheckInDate || new Date().toISOString());
+      const checkout = addDays(checkIn, data.plannedStayDuration);
 
       const [allotment] = await Allotment.create(
         [{
           employeeId: employee._id,
           bootcampId: unit.bootcampId,
           allocationUnitId: unit._id,
-          expectedCheckInDate: expectedCheckIn,
+          checkInDate: checkIn,
+          expectedCheckInDate: checkIn,
+          actualCheckInDate: checkIn,
           plannedStayDuration: data.plannedStayDuration,
-          expectedCheckoutDate: expectedCheckout,
-          status: AllotmentStatus.PENDING,
+          checkoutDate: checkout,
+          expectedCheckoutDate: checkout,
+          status: AllotmentStatus.CHECKED_IN,
           createdById: new Types.ObjectId(data.createdById),
           notes: data.notes,
         }],
@@ -124,7 +129,8 @@ export class AllotmentService {
   private static async _createWithoutTransaction(data: {
     employeeId: string;
     allocationUnitId: string;
-    expectedCheckInDate: string;
+    checkInDate?: string;
+    expectedCheckInDate?: string;
     plannedStayDuration: number;
     createdById: string;
     notes?: string;
@@ -170,8 +176,8 @@ export class AllotmentService {
       );
     }
 
-    const expectedCheckIn = new Date(data.expectedCheckInDate);
-    const expectedCheckout = addDays(expectedCheckIn, data.plannedStayDuration);
+    const checkIn = new Date(data.checkInDate || data.expectedCheckInDate || new Date().toISOString());
+    const checkout = addDays(checkIn, data.plannedStayDuration);
 
     let allotment: IAllotment;
     try {
@@ -179,10 +185,13 @@ export class AllotmentService {
         employeeId: employee._id,
         bootcampId: unit.bootcampId,
         allocationUnitId: unit._id,
-        expectedCheckInDate: expectedCheckIn,
+        checkInDate: checkIn,
+        expectedCheckInDate: checkIn,
+        actualCheckInDate: checkIn,
         plannedStayDuration: data.plannedStayDuration,
-        expectedCheckoutDate: expectedCheckout,
-        status: AllotmentStatus.PENDING,
+        checkoutDate: checkout,
+        expectedCheckoutDate: checkout,
+        status: AllotmentStatus.CHECKED_IN,
         createdById: new Types.ObjectId(data.createdById),
         notes: data.notes,
       });
@@ -219,10 +228,12 @@ export class AllotmentService {
     }
 
     const actualCheckIn = new Date(actualCheckInDateStr);
-    const newExpectedCheckout = addDays(actualCheckIn, allotment.plannedStayDuration);
+    const newCheckout = addDays(actualCheckIn, allotment.plannedStayDuration);
 
+    allotment.checkInDate = actualCheckIn;
     allotment.actualCheckInDate = actualCheckIn;
-    allotment.expectedCheckoutDate = newExpectedCheckout;
+    allotment.checkoutDate = newCheckout;
+    allotment.expectedCheckoutDate = newCheckout;
     allotment.status = AllotmentStatus.CHECKED_IN;
     allotment.checkInConfirmedById = new Types.ObjectId(adminUserId);
 
@@ -309,8 +320,10 @@ export class AllotmentService {
     }
 
     allotment.plannedStayDuration = newDuration;
-    const baseDate = allotment.actualCheckInDate || allotment.expectedCheckInDate;
-    allotment.expectedCheckoutDate = addDays(baseDate, newDuration);
+    const baseDate = allotment.checkInDate || allotment.actualCheckInDate || allotment.expectedCheckInDate;
+    const newCheckout = addDays(baseDate, newDuration);
+    allotment.checkoutDate = newCheckout;
+    allotment.expectedCheckoutDate = newCheckout;
 
     await allotment.save();
     return allotment;
