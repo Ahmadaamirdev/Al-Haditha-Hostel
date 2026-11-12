@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from './AuthContext';
-import { LogIn, ShieldAlert } from 'lucide-react';
+import { ShieldAlert } from 'lucide-react';
+import logoImg from '../../assets/logo.png';
 
 export const LoginForm: React.FC = () => {
   const { login } = useAuth();
@@ -24,26 +25,30 @@ export const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-900 px-4">
-      <div className="max-w-md w-full bg-slate-800 border border-slate-700 rounded-xl shadow-xl p-8">
+    <div className="min-h-screen flex items-center justify-center bg-[#0a192f] px-4">
+      <div className="max-w-md w-full bg-[#112240] border border-slate-700/80 rounded-2xl shadow-2xl p-8">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-sky-600 rounded-lg text-white mb-3">
-            <LogIn className="w-6 h-6" />
+          <div className="inline-block bg-white rounded-2xl p-4 shadow-lg mb-4">
+            <img
+              src={logoImg}
+              alt="Al Haditha Energy"
+              className="h-12 w-auto object-contain mx-auto"
+            />
           </div>
-          <h2 className="text-2xl font-bold text-white tracking-tight">Al Haditha Hostel</h2>
-          <p className="text-sm text-slate-400 mt-1">
-            Allotment Management System &bull; Administrator Access
+          <h2 className="text-xl font-bold text-white tracking-tight">Hostel Allotment Management</h2>
+          <p className="text-xs text-slate-400 mt-1">
+            Al Haditha Energy &bull; Secure Administrator Portal
           </p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 rounded-lg bg-rose-950/40 border border-rose-800 text-rose-300 text-sm flex items-start gap-3">
-            <ShieldAlert className="w-5 h-5 shrink-0 text-rose-400 mt-0.5" />
+          <div className="mb-6 p-4 rounded-xl bg-rose-950/40 border border-rose-800 text-rose-300 text-xs flex items-start gap-3">
+            <ShieldAlert className="w-4 h-4 shrink-0 text-rose-400 mt-0.5" />
             <span>{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
               Username / Email
@@ -53,7 +58,7 @@ export const LoginForm: React.FC = () => {
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-lg bg-slate-900/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent text-sm"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#0a192f] border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#00a651] focus:border-transparent text-sm"
               placeholder="admin@alhaditha.com"
             />
           </div>
@@ -67,7 +72,7 @@ export const LoginForm: React.FC = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-lg bg-slate-900/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent text-sm"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#0a192f] border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#00a651] focus:border-transparent text-sm"
               placeholder="••••••••"
             />
           </div>
@@ -75,9 +80,9 @@ export const LoginForm: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 px-4 bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white font-medium rounded-lg shadow transition duration-150 flex items-center justify-center gap-2 text-sm mt-2"
+            className="w-full py-3 px-4 bg-[#00a651] hover:bg-[#008c44] disabled:opacity-50 text-white font-semibold rounded-xl shadow-lg shadow-[#00a651]/20 transition duration-150 flex items-center justify-center gap-2 text-sm mt-3"
           >
-            {loading ? 'Authenticating...' : 'Sign In'}
+            {loading ? 'Authenticating...' : 'Sign In to Portal'}
           </button>
         </form>
       </div>

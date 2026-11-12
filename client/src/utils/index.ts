@@ -26,3 +26,4 @@ export function formatDateTime(dateString?: string | null): string {
     minute: '2-digit',
   });
 }
+

@@ -54,3 +54,4 @@ export const updateDurationSchema = z.object({
     plannedStayDuration: z.number().int().min(1, 'Duration must be at least 1 day'),
   }),
 });
+

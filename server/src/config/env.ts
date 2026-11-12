@@ -12,3 +12,4 @@ export const config = {
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
   upcomingDaysThreshold: parseInt(process.env.UPCOMING_CHECKOUT_DAYS_THRESHOLD || '2', 10),
 };
+

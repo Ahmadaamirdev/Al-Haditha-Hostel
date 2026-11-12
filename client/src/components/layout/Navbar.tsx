@@ -106,3 +106,4 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onSelectTab }) => {
     </header>
   );
 };
+

@@ -54,3 +54,4 @@ const bootcampSchema = new Schema<IBootcamp>(
 bootcampSchema.index({ category: 1, isActive: 1 });
 
 export const Bootcamp = mongoose.model<IBootcamp>('Bootcamp', bootcampSchema);
+

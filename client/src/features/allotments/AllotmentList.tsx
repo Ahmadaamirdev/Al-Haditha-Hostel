@@ -8,6 +8,7 @@ import {
   LogOut,
   Edit2,
   Sparkles,
+  CalendarCheck2,
 } from 'lucide-react';
 
 export const AllotmentList: React.FC = () => {
@@ -62,7 +63,6 @@ export const AllotmentList: React.FC = () => {
     fetchActiveAllotments();
   }, [statusFilter, search]);
 
-  // Load eligible employees when opening creation modal
   const openNewAllotmentModal = async () => {
     try {
       setActionError(null);
@@ -198,128 +198,151 @@ export const AllotmentList: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-bold text-slate-900">Active Allotments & Stays</h2>
-          <p className="text-sm text-slate-500">
-            Real-time accommodation assignments. Shows active pending and checked-in stays only.
-          </p>
-        </div>
-        <button
-          onClick={openNewAllotmentModal}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-sm font-medium shadow-sm transition"
-        >
-          <Plus className="w-4 h-4" />
-          Assign New Allotment
-        </button>
-      </div>
+      {/* Live Stream Header Card like screenshot */}
+      <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-[#00a651] flex items-center justify-center font-bold">
+              <CalendarCheck2 className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-base font-bold text-slate-800">
+                  Live Allotment & Stay Registry
+                </h2>
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-[#00a651] border border-emerald-200/60">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#00a651] animate-pulse"></span>
+                  Active Records
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Real-time accommodation assignments. Showing active pending and checked-in stays.
+              </p>
+            </div>
+          </div>
 
-      {/* Filter and Search */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          {['', 'PENDING', 'CHECKED_IN'].map((st) => (
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-semibold text-slate-400 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+              Showing {allotments.length} active stays
+            </span>
             <button
-              key={st}
-              onClick={() => setStatusFilter(st)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wider transition ${
-                statusFilter === st
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
+              onClick={openNewAllotmentModal}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[#00a651] hover:bg-[#008c44] text-white rounded-xl text-xs font-bold shadow-md shadow-[#00a651]/20 transition"
             >
-              {st === '' ? 'All Active' : st.replace('_', ' ')}
+              <Plus className="w-4 h-4" />
+              Assign Allotment
             </button>
-          ))}
+          </div>
         </div>
 
-        <div className="w-full sm:w-64">
-          <input
-            type="text"
-            placeholder="Search employee, bootcamp, unit..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-3 py-1.5 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
-          />
+        {/* Filter bar styled identically to screenshot pills */}
+        <div className="mt-6 pt-5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mr-1">
+              Status:
+            </span>
+            {[
+              { id: '', label: 'All Active' },
+              { id: 'PENDING', label: 'Pending Check-In' },
+              { id: 'CHECKED_IN', label: 'Checked In' },
+            ].map((st) => (
+              <button
+                key={st.id}
+                onClick={() => setStatusFilter(st.id)}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${
+                  statusFilter === st.id
+                    ? 'bg-[#00a651] text-white shadow-sm'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                {st.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="w-full sm:w-72">
+            <input
+              type="text"
+              placeholder="Search staff name or ID..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00a651]"
+            />
+          </div>
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      {/* Table matching Al Haditha screenshot */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
         {loading ? (
-          <div className="p-8 text-center text-slate-500 text-sm">Loading active allotments...</div>
+          <div className="p-8 text-center text-slate-400 text-xs">Loading active allotments...</div>
         ) : allotments.length === 0 ? (
-          <div className="p-8 text-center text-slate-500 text-sm">No active allotments found.</div>
+          <div className="p-8 text-center text-slate-400 text-xs">No active allotments found.</div>
         ) : (
-          <table className="w-full text-left border-collapse text-sm">
+          <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-semibold text-xs uppercase tracking-wider">
-                <th className="py-3 px-4">Employee</th>
-                <th className="py-3 px-4">Allocated Unit</th>
-                <th className="py-3 px-4">Check-In Dates</th>
-                <th className="py-3 px-4">Stay & Checkout</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+              <tr className="bg-slate-50/80 border-b border-slate-200/80 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                <th className="py-3 px-5">Date & Time</th>
+                <th className="py-3 px-5">Employee ID</th>
+                <th className="py-3 px-5">Staff Name</th>
+                <th className="py-3 px-5">Category</th>
+                <th className="py-3 px-5">Allocated Unit</th>
+                <th className="py-3 px-5">Planned Duration</th>
+                <th className="py-3 px-5">Status</th>
+                <th className="py-3 px-5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {allotments.map((item) => (
-                <tr key={item._id} className="hover:bg-slate-50/60 transition">
-                  <td className="py-3.5 px-4">
-                    <div className="font-medium text-slate-900">{item.employeeId?.name}</div>
-                    <div className="text-xs text-slate-400 font-mono">
-                      {item.employeeId?.employeeId} &bull; {item.employeeId?.category}
-                    </div>
+                <tr key={item._id} className="hover:bg-slate-50/70 transition">
+                  <td className="py-3.5 px-5 font-mono text-slate-600">
+                    {formatDate(item.createdAt)}
                   </td>
-
-                  <td className="py-3.5 px-4">
-                    <div className="font-mono font-semibold text-slate-800 text-xs">
-                      {item.allocationUnitId?.unitCode}
-                    </div>
-                    <div className="text-[11px] text-slate-500">
-                      {item.bootcampId?.name} ({item.allocationUnitId?.unitType})
-                    </div>
+                  <td className="py-3.5 px-5 font-mono font-bold text-slate-800">
+                    {item.employeeId?.employeeId}
                   </td>
-
-                  <td className="py-3.5 px-4">
-                    <div className="text-xs">
-                      <span className="text-slate-400">Exp:</span>{' '}
-                      {formatDate(item.expectedCheckInDate)}
-                    </div>
-                    <div className="text-xs mt-0.5">
-                      <span className="text-slate-400">Act:</span>{' '}
-                      {item.actualCheckInDate ? (
-                        <span className="text-emerald-700 font-medium">
-                          {formatDate(item.actualCheckInDate)}
-                        </span>
-                      ) : (
-                        <span className="text-amber-600 italic">Not confirmed</span>
-                      )}
-                    </div>
+                  <td className="py-3.5 px-5 font-bold text-slate-900">
+                    {item.employeeId?.name}
                   </td>
-
-                  <td className="py-3.5 px-4">
-                    <div className="text-xs font-semibold text-slate-800">
-                      {item.plannedStayDuration} Days Planned
-                    </div>
-                    <div className="text-xs text-slate-500 mt-0.5">
-                      Exp. Departure: {formatDate(item.expectedCheckoutDate)}
-                    </div>
-                  </td>
-
-                  <td className="py-3.5 px-4">
+                  <td className="py-3.5 px-5">
                     <span
-                      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${
-                        item.status === 'CHECKED_IN'
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : 'bg-amber-100 text-amber-800'
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                        item.employeeId?.category === 'JUNIOR'
+                          ? 'bg-[#ecfdf5] text-[#00a651]'
+                          : item.employeeId?.category === 'SENIOR'
+                          ? 'bg-[#f0f9ff] text-[#0284c7]'
+                          : 'bg-purple-50 text-purple-700'
                       }`}
                     >
-                      {item.status === 'CHECKED_IN' ? 'Checked In' : 'Pending Check-In'}
+                      {item.employeeId?.category}
                     </span>
                   </td>
-
-                  <td className="py-3.5 px-4 text-right">
+                  <td className="py-3.5 px-5 font-mono font-semibold text-slate-800">
+                    {item.allocationUnitId?.unitCode}
+                    <span className="block text-[10px] text-slate-400 font-sans font-normal">
+                      {item.bootcampId?.name}
+                    </span>
+                  </td>
+                  <td className="py-3.5 px-5">
+                    <span className="font-semibold text-slate-800">
+                      {item.plannedStayDuration} Days
+                    </span>
+                    <span className="block text-[10px] text-slate-400">
+                      Exp: {formatDate(item.expectedCheckoutDate)}
+                    </span>
+                  </td>
+                  <td className="py-3.5 px-5">
+                    {item.status === 'CHECKED_IN' ? (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#ecfdf5] text-[#00a651] border border-[#a7f3d0]">
+                        ✓ Verified In
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                        Pending
+                      </span>
+                    )}
+                  </td>
+                  <td className="py-3.5 px-5 text-right">
                     <div className="inline-flex items-center gap-1.5">
                       {item.status === 'PENDING' && (
                         <button
@@ -328,10 +351,9 @@ export const AllotmentList: React.FC = () => {
                             setActionDate(new Date().toISOString().split('T')[0]);
                             setIsCheckInModalOpen(true);
                           }}
-                          className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition text-xs font-medium inline-flex items-center gap-1"
-                          title="Confirm Physical Arrival"
+                          className="px-2.5 py-1 rounded-lg bg-[#ecfdf5] text-[#00a651] hover:bg-[#d1fae5] transition text-[11px] font-bold inline-flex items-center gap-1"
                         >
-                          <LogIn className="w-3.5 h-3.5" />
+                          <LogIn className="w-3 h-3" />
                           Check-In
                         </button>
                       )}
@@ -343,10 +365,9 @@ export const AllotmentList: React.FC = () => {
                             setActionDate(new Date().toISOString().split('T')[0]);
                             setIsCheckOutModalOpen(true);
                           }}
-                          className="p-1.5 rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100 transition text-xs font-medium inline-flex items-center gap-1"
-                          title="Confirm Physical Departure"
+                          className="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 transition text-[11px] font-bold inline-flex items-center gap-1"
                         >
-                          <LogOut className="w-3.5 h-3.5" />
+                          <LogOut className="w-3 h-3" />
                           Check-Out
                         </button>
                       )}
@@ -357,8 +378,7 @@ export const AllotmentList: React.FC = () => {
                           setNewDuration(item.plannedStayDuration);
                           setIsDurationModalOpen(true);
                         }}
-                        className="p-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition text-xs font-medium"
-                        title="Modify Stay Duration"
+                        className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
@@ -373,33 +393,33 @@ export const AllotmentList: React.FC = () => {
 
       {/* Modal 1: New Allotment Creation */}
       {isNewAllotmentOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 border border-slate-200">
-            <h3 className="text-lg font-bold text-slate-900 mb-1">Assign New Allotment</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 border border-slate-200">
+            <h3 className="text-base font-bold text-slate-900 mb-1">Assign New Allotment</h3>
             <p className="text-xs text-slate-500 mb-4">
               Select eligible employee, choose a manual or system-suggested unit, and set planned duration.
             </p>
 
             {actionError && (
-              <div className="mb-4 p-3 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 text-xs">
+              <div className="mb-4 p-3 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-xs">
                 {actionError}
               </div>
             )}
 
             <form onSubmit={handleCreateAllotment} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Eligible Employee *
                 </label>
                 {eligibleEmployees.length === 0 ? (
-                  <div className="text-xs text-rose-600 bg-rose-50 p-2.5 rounded-lg border border-rose-200">
+                  <div className="text-xs text-rose-600 bg-rose-50 p-3 rounded-xl border border-rose-200">
                     No eligible employees available without an active stay.
                   </div>
                 ) : (
                   <select
                     value={selectedEmployeeId}
                     onChange={(e) => handleEmployeeChange(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#00a651]"
                   >
                     {eligibleEmployees.map((e) => (
                       <option key={e._id} value={e._id}>
@@ -412,13 +432,13 @@ export const AllotmentList: React.FC = () => {
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-medium text-slate-700">
+                  <label className="block text-xs font-semibold text-slate-700">
                     Available Allocation Unit *
                   </label>
                   <button
                     type="button"
                     onClick={handleRequestSuggestion}
-                    className="text-xs text-sky-600 hover:text-sky-700 font-semibold inline-flex items-center gap-1"
+                    className="text-xs text-[#00a651] hover:text-[#008c44] font-bold inline-flex items-center gap-1"
                   >
                     <Sparkles className="w-3.5 h-3.5" />
                     Auto-Suggest Optimal Unit
@@ -426,20 +446,20 @@ export const AllotmentList: React.FC = () => {
                 </div>
 
                 {suggestedUnitNote && (
-                  <div className="mb-2 p-2 rounded bg-sky-50 border border-sky-200 text-sky-800 text-[11px] font-medium">
+                  <div className="mb-2 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-[#00a651] text-xs font-medium">
                     {suggestedUnitNote}
                   </div>
                 )}
 
                 {availableUnits.length === 0 ? (
-                  <div className="text-xs text-amber-700 bg-amber-50 p-2.5 rounded-lg border border-amber-200">
+                  <div className="text-xs text-amber-700 bg-amber-50 p-3 rounded-xl border border-amber-200">
                     No available units found matching this employee's category.
                   </div>
                 ) : (
                   <select
                     value={selectedUnitId}
                     onChange={(e) => setSelectedUnitId(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono text-xs"
+                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl font-mono text-xs focus:outline-none focus:ring-2 focus:ring-[#00a651]"
                   >
                     {availableUnits.map((u: any) => (
                       <option key={u._id} value={u._id}>
@@ -452,7 +472,7 @@ export const AllotmentList: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Expected Check-In Date *
                   </label>
                   <input
@@ -460,12 +480,12 @@ export const AllotmentList: React.FC = () => {
                     required
                     value={expectedCheckInDate}
                     onChange={(e) => setExpectedCheckInDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#00a651]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Planned Stay (Days) *
                   </label>
                   <input
@@ -474,21 +494,21 @@ export const AllotmentList: React.FC = () => {
                     required
                     value={plannedStayDuration}
                     onChange={(e) => setPlannedStayDuration(Number(e.target.value))}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#00a651]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Administrative Notes
                 </label>
                 <textarea
                   rows={2}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="e.g. Training cohort 4, Project Omega"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  placeholder="e.g. Project deployment"
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#00a651]"
                 />
               </div>
 
@@ -496,14 +516,14 @@ export const AllotmentList: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsNewAllotmentOpen(false)}
-                  className="px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 hover:bg-slate-50"
+                  className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={availableUnits.length === 0 || eligibleEmployees.length === 0}
-                  className="px-4 py-2 bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white rounded-lg text-sm font-medium shadow-sm"
+                  className="px-4 py-2 bg-[#00a651] hover:bg-[#008c44] disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-md shadow-[#00a651]/20"
                 >
                   Confirm Reservation
                 </button>
@@ -515,28 +535,28 @@ export const AllotmentList: React.FC = () => {
 
       {/* Modal 2: Confirm Check-In */}
       {isCheckInModalOpen && selectedAllotment && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 border border-slate-200">
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Confirm Physical Check-In</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-200">
+            <h3 className="text-base font-bold text-slate-900 mb-2">Confirm Physical Check-In</h3>
             <p className="text-xs text-slate-500 mb-4">
               Employee: <strong>{selectedAllotment.employeeId?.name}</strong> (
               {selectedAllotment.allocationUnitId?.unitCode})
             </p>
 
-            <div className="mb-4 p-3 bg-sky-50 border border-sky-200 rounded-lg text-xs text-sky-800">
+            <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-[#00a651]">
               <strong>Approved Recalculation Rule Active:</strong> Expected checkout date will be
               automatically recomputed as <em>Actual Check-In + Planned Stay Duration</em>.
             </div>
 
             {actionError && (
-              <div className="mb-4 p-3 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 text-xs">
+              <div className="mb-4 p-3 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-xs">
                 {actionError}
               </div>
             )}
 
             <form onSubmit={handleConfirmCheckIn} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Actual Check-In Date *
                 </label>
                 <input
@@ -544,7 +564,7 @@ export const AllotmentList: React.FC = () => {
                   required
                   value={actionDate}
                   onChange={(e) => setActionDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#00a651]"
                 />
               </div>
 
@@ -552,13 +572,13 @@ export const AllotmentList: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsCheckInModalOpen(false)}
-                  className="px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 hover:bg-slate-50"
+                  className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-medium shadow-sm"
+                  className="px-4 py-2 bg-[#00a651] hover:bg-[#008c44] text-white rounded-xl text-xs font-bold shadow-md shadow-[#00a651]/20"
                 >
                   Confirm Arrival
                 </button>
@@ -570,23 +590,23 @@ export const AllotmentList: React.FC = () => {
 
       {/* Modal 3: Confirm Check-Out */}
       {isCheckOutModalOpen && selectedAllotment && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 border border-slate-200">
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Confirm Physical Check-Out</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-200">
+            <h3 className="text-base font-bold text-slate-900 mb-2">Confirm Physical Check-Out</h3>
             <p className="text-xs text-slate-500 mb-4">
               Confirming checkout will release unit{' '}
               <strong>{selectedAllotment.allocationUnitId?.unitCode}</strong> immediately for subsequent stays.
             </p>
 
             {actionError && (
-              <div className="mb-4 p-3 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 text-xs">
+              <div className="mb-4 p-3 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-xs">
                 {actionError}
               </div>
             )}
 
             <form onSubmit={handleConfirmCheckOut} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Actual Check-Out Date *
                 </label>
                 <input
@@ -594,7 +614,7 @@ export const AllotmentList: React.FC = () => {
                   required
                   value={actionDate}
                   onChange={(e) => setActionDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-rose-500"
                 />
               </div>
 
@@ -602,13 +622,13 @@ export const AllotmentList: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsCheckOutModalOpen(false)}
-                  className="px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 hover:bg-slate-50"
+                  className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-sm font-medium shadow-sm"
+                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold shadow-md shadow-rose-600/20"
                 >
                   Complete Checkout & Release Unit
                 </button>
@@ -620,22 +640,22 @@ export const AllotmentList: React.FC = () => {
 
       {/* Modal 4: Update Duration */}
       {isDurationModalOpen && selectedAllotment && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 border border-slate-200">
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Adjust Planned Stay Duration</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-200">
+            <h3 className="text-base font-bold text-slate-900 mb-2">Adjust Planned Stay Duration</h3>
             <p className="text-xs text-slate-500 mb-4">
               Increasing or decreasing duration will automatically recalculate the expected checkout date.
             </p>
 
             {actionError && (
-              <div className="mb-4 p-3 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 text-xs">
+              <div className="mb-4 p-3 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-xs">
                 {actionError}
               </div>
             )}
 
             <form onSubmit={handleUpdateDuration} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   New Planned Duration (Days) *
                 </label>
                 <input
@@ -644,7 +664,7 @@ export const AllotmentList: React.FC = () => {
                   required
                   value={newDuration}
                   onChange={(e) => setNewDuration(Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#00a651]"
                 />
               </div>
 
@@ -652,13 +672,13 @@ export const AllotmentList: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsDurationModalOpen(false)}
-                  className="px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 hover:bg-slate-50"
+                  className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-sm font-medium shadow-sm"
+                  className="px-4 py-2 bg-[#00a651] hover:bg-[#008c44] text-white rounded-xl text-xs font-bold shadow-md shadow-[#00a651]/20"
                 >
                   Recalculate & Save
                 </button>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './features/auth/AuthContext';
 import { LoginForm } from './features/auth/LoginForm';
-import { Navbar } from './components/layout/Navbar';
+import { Sidebar } from './components/layout/Sidebar';
+import { Header } from './components/layout/Header';
 import { DashboardOverview } from './features/dashboard/DashboardOverview';
 import { AllotmentList } from './features/allotments/AllotmentList';
 import { BootcampList } from './features/bootcamps/BootcampList';
@@ -14,7 +15,7 @@ const MainLayout: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white text-sm">
+      <div className="min-h-screen flex items-center justify-center bg-[#0a192f] text-white text-sm">
         Initializing Al Haditha Management System...
       </div>
     );
@@ -25,16 +26,22 @@ const MainLayout: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col">
-      <Navbar currentTab={currentTab} onSelectTab={setCurrentTab} />
+    <div className="min-h-screen bg-[#f3f6f9] flex">
+      {/* Dark Sidebar matching Al Haditha style */}
+      <Sidebar currentTab={currentTab} onSelectTab={setCurrentTab} />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {currentTab === 'dashboard' && <DashboardOverview onNavigate={setCurrentTab} />}
-        {currentTab === 'allotments' && <AllotmentList />}
-        {currentTab === 'bootcamps' && <BootcampList />}
-        {currentTab === 'employees' && <EmployeeList />}
-        {currentTab === 'notifications' && <NotificationPanel />}
-      </main>
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        <Header />
+
+        <main className="flex-1 px-8 pb-10">
+          {currentTab === 'dashboard' && <DashboardOverview onNavigate={setCurrentTab} />}
+          {currentTab === 'allotments' && <AllotmentList />}
+          {currentTab === 'bootcamps' && <BootcampList />}
+          {currentTab === 'employees' && <EmployeeList />}
+          {currentTab === 'notifications' && <NotificationPanel />}
+        </main>
+      </div>
     </div>
   );
 };

@@ -31,3 +31,4 @@ export enum NotificationType {
 export const NOTIFICATION_THRESHOLDS = {
   UPCOMING_DAYS: 2,
 };
+

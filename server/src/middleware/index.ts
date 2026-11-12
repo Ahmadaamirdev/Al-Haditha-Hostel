@@ -85,3 +85,4 @@ export const errorHandler = (
   console.error('[Unhandled Server Error]:', err);
   sendError(res, 'Internal server error', 500, 'INTERNAL_ERROR');
 };
+

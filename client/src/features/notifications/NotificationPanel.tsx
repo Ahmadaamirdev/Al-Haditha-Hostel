@@ -33,52 +33,68 @@ export const NotificationPanel: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h2 className="text-xl font-bold text-slate-900">Checkout Notifications & Alerts</h2>
-        <p className="text-sm text-slate-500">
-          Computed from active stays in real-time. Overdue status does NOT auto-release allocation units.
-        </p>
+      <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+            <Bell className="w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="text-base font-bold text-slate-800">
+              Hostel Checkout Notifications
+            </h2>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Overdue, Due Today, and Upcoming (2 days) checkout monitors.
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={fetchNotifications}
+          className="text-xs font-bold text-[#00a651] hover:text-[#008c44] bg-[#ecfdf5] px-3.5 py-1.5 rounded-xl border border-[#a7f3d0] transition"
+        >
+          Refresh Feed
+        </button>
       </div>
 
       {/* Metric Counters */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 flex items-center gap-4">
-          <div className="p-3 bg-rose-600 text-white rounded-lg">
+        <div className="bg-white border border-rose-200/80 rounded-2xl p-5 flex items-center gap-4 shadow-sm">
+          <div className="p-3 bg-rose-50 text-rose-600 rounded-xl">
             <ShieldAlert className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-rose-900">
+            <div className="text-2xl font-extrabold text-rose-600">
               {data?.summary?.overdueCount ?? 0}
             </div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-rose-700">
+            <div className="text-xs font-bold uppercase tracking-wider text-rose-700">
               Overdue Checkouts
             </div>
           </div>
         </div>
 
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-4">
-          <div className="p-3 bg-amber-600 text-white rounded-lg">
+        <div className="bg-white border border-amber-200/80 rounded-2xl p-5 flex items-center gap-4 shadow-sm">
+          <div className="p-3 bg-amber-50 text-amber-600 rounded-xl">
             <AlertCircle className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-amber-900">
+            <div className="text-2xl font-extrabold text-amber-600">
               {data?.summary?.dueTodayCount ?? 0}
             </div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-amber-700">
+            <div className="text-xs font-bold uppercase tracking-wider text-amber-700">
               Due Today
             </div>
           </div>
         </div>
 
-        <div className="bg-sky-50 border border-sky-200 rounded-xl p-4 flex items-center gap-4">
-          <div className="p-3 bg-sky-600 text-white rounded-lg">
+        <div className="bg-white border border-emerald-200/80 rounded-2xl p-5 flex items-center gap-4 shadow-sm">
+          <div className="p-3 bg-emerald-50 text-[#00a651] rounded-xl">
             <Clock className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-sky-900">
+            <div className="text-2xl font-extrabold text-[#00a651]">
               {data?.summary?.upcomingCount ?? 0}
             </div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-sky-700">
+            <div className="text-xs font-bold uppercase tracking-wider text-[#00a651]">
               Upcoming (2 Days)
             </div>
           </div>
@@ -86,38 +102,23 @@ export const NotificationPanel: React.FC = () => {
       </div>
 
       {/* Alerts Feed */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-100 bg-slate-50/60 flex items-center justify-between">
-          <div className="text-sm font-bold text-slate-800 flex items-center gap-2">
-            <Bell className="w-4 h-4 text-slate-500" />
-            Active Alert Stream
-          </div>
-          <button
-            onClick={fetchNotifications}
-            className="text-xs text-sky-600 hover:text-sky-700 font-semibold"
-          >
-            Refresh
-          </button>
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div className="p-4 border-b border-slate-100 bg-slate-50/60 text-xs font-bold text-slate-700">
+          Live Actionable Alerts
         </div>
 
         {loading ? (
-          <div className="p-8 text-center text-slate-500 text-sm">Evaluating active stays...</div>
+          <div className="p-8 text-center text-slate-400 text-xs">Evaluating active stays...</div>
         ) : !data || data.alerts.length === 0 ? (
-          <div className="p-8 text-center text-slate-500 text-sm">
+          <div className="p-8 text-center text-slate-400 text-xs">
             All active allotments are within normal schedule. No checkout alerts pending.
           </div>
         ) : (
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-slate-100 text-xs">
             {data.alerts.map((item, idx) => (
               <div
                 key={idx}
-                className={`p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 transition ${
-                  item.type === NotificationType.OVERDUE
-                    ? 'bg-rose-50/40 hover:bg-rose-50/70'
-                    : item.type === NotificationType.DUE_TODAY
-                    ? 'bg-amber-50/40 hover:bg-amber-50/70'
-                    : 'bg-white hover:bg-slate-50'
-                }`}
+                className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-slate-50/70 transition"
               >
                 <div className="flex items-start gap-3">
                   <div className="mt-0.5">
@@ -132,7 +133,7 @@ export const NotificationPanel: React.FC = () => {
                       </span>
                     )}
                     {item.type === NotificationType.UPCOMING && (
-                      <span className="p-1.5 rounded-full bg-sky-100 text-sky-700 inline-block">
+                      <span className="p-1.5 rounded-full bg-[#ecfdf5] text-[#00a651] inline-block">
                         <Clock className="w-4 h-4" />
                       </span>
                     )}
@@ -140,22 +141,22 @@ export const NotificationPanel: React.FC = () => {
 
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-slate-900">
+                      <span className="font-bold text-slate-900">
                         {item.employee?.name}
                       </span>
-                      <span className="font-mono text-xs text-slate-400">
+                      <span className="font-mono text-slate-400">
                         ({item.employee?.employeeId})
                       </span>
-                      <span className="text-[11px] font-semibold uppercase px-2 py-0.5 rounded bg-slate-100 text-slate-700">
+                      <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-slate-100 text-slate-600">
                         {item.employee?.category}
                       </span>
                     </div>
 
-                    <div className="text-xs text-slate-600 mt-1">
-                      Assigned to <strong>{item.unit?.unitCode}</strong> &bull; {item.bootcamp?.name}
+                    <div className="text-slate-500 mt-1">
+                      Assigned to <strong className="text-slate-700">{item.unit?.unitCode}</strong> &bull; {item.bootcamp?.name}
                     </div>
 
-                    <div className="text-xs text-slate-400 mt-0.5">
+                    <div className="text-slate-400 text-[11px] mt-0.5">
                       Expected Departure: {formatDate(item.expectedCheckoutDate)}
                     </div>
                   </div>
@@ -163,17 +164,17 @@ export const NotificationPanel: React.FC = () => {
 
                 <div>
                   {item.type === NotificationType.OVERDUE && (
-                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                    <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
                       Overdue by {item.daysOverdue} {item.daysOverdue === 1 ? 'day' : 'days'}
                     </span>
                   )}
                   {item.type === NotificationType.DUE_TODAY && (
-                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
-                      Checkout Due Today
+                    <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                      Due Today
                     </span>
                   )}
                   {item.type === NotificationType.UPCOMING && (
-                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-sky-100 text-sky-800 border border-sky-200">
+                    <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-[#ecfdf5] text-[#00a651] border border-[#a7f3d0]">
                       {item.daysRemaining} {item.daysRemaining === 1 ? 'day' : 'days'} remaining
                     </span>
                   )}

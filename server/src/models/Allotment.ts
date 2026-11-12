@@ -118,3 +118,4 @@ allotmentSchema.index(
 allotmentSchema.index({ status: 1, expectedCheckoutDate: 1 });
 
 export const Allotment = mongoose.model<IAllotment>('Allotment', allotmentSchema);
+

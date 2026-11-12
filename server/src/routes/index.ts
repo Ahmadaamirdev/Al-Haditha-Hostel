@@ -33,3 +33,4 @@ router.patch('/allotments/:id/duration', validate(validations.updateDurationSche
 router.get('/notifications', controllers.getNotifications);
 
 export default router;
+

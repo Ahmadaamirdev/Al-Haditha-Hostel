@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { apiRequest } from '../../services/apiClient';
-import { UserPlus, Filter, CheckCircle2 } from 'lucide-react';
+import { UserPlus, Filter, Users } from 'lucide-react';
 import { Employee, EmployeeCategory } from '../../types';
 
 export const EmployeeList: React.FC = () => {
@@ -65,102 +65,109 @@ export const EmployeeList: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header with Search and New Employee button */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-bold text-slate-900">Employee Directory</h2>
-          <p className="text-sm text-slate-500">
-            Manage VIP, Senior, and Junior workforce members eligible for bootcamp allotment.
-          </p>
+      {/* Header matching Al Haditha screenshot */}
+      <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-[#00a651] flex items-center justify-center font-bold">
+            <Users className="w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="text-base font-bold text-slate-800">
+              Staff & Workforce Directory
+            </h2>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Manage VIP, Senior, and Junior personnel eligible for bootcamp lodging.
+            </p>
+          </div>
         </div>
+
         <button
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-sm font-medium shadow-sm transition"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-[#00a651] hover:bg-[#008c44] text-white rounded-xl text-xs font-bold shadow-md shadow-[#00a651]/20 transition"
         >
           <UserPlus className="w-4 h-4" />
-          Register Employee
+          Register Staff Member
         </button>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
+      <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Filter className="w-4 h-4 text-slate-400" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Category Filter:
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+            Category:
           </span>
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="text-sm bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#00a651] font-semibold text-slate-700"
           >
-            <option value="">All Categories</option>
+            <option value="">All Staff</option>
             <option value="VIP">VIP</option>
             <option value="SENIOR">Senior</option>
             <option value="JUNIOR">Junior</option>
           </select>
         </div>
 
-        <div className="w-full sm:w-64">
+        <div className="w-full sm:w-72">
           <input
             type="text"
-            placeholder="Search name or ID..."
+            placeholder="Search staff name or ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-3 py-1.5 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className="w-full px-3.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00a651]"
           />
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      {/* Table matching Al Haditha screenshot style */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
         {loading ? (
-          <div className="p-8 text-center text-slate-500 text-sm">Loading employees...</div>
+          <div className="p-8 text-center text-slate-400 text-xs">Loading employee records...</div>
         ) : employees.length === 0 ? (
-          <div className="p-8 text-center text-slate-500 text-sm">No employees found.</div>
+          <div className="p-8 text-center text-slate-400 text-xs">No employees found.</div>
         ) : (
-          <table className="w-full text-left border-collapse text-sm">
+          <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-semibold text-xs uppercase tracking-wider">
-                <th className="py-3 px-4">Employee ID</th>
-                <th className="py-3 px-4">Name</th>
-                <th className="py-3 px-4">Category</th>
-                <th className="py-3 px-4">Department</th>
-                <th className="py-3 px-4">Contact</th>
-                <th className="py-3 px-4">Allotment Status</th>
+              <tr className="bg-slate-50/80 border-b border-slate-200/80 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                <th className="py-3 px-5">Employee ID</th>
+                <th className="py-3 px-5">Staff Name</th>
+                <th className="py-3 px-5">Category</th>
+                <th className="py-3 px-5">Department</th>
+                <th className="py-3 px-5">Contact</th>
+                <th className="py-3 px-5">Allotment Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {employees.map((emp) => (
-                <tr key={emp._id} className="hover:bg-slate-50/60 transition">
-                  <td className="py-3 px-4 font-mono font-medium text-slate-900">
+                <tr key={emp._id} className="hover:bg-slate-50/70 transition">
+                  <td className="py-3.5 px-5 font-mono font-bold text-slate-800">
                     {emp.employeeId}
                   </td>
-                  <td className="py-3 px-4 font-medium text-slate-800">{emp.name}</td>
-                  <td className="py-3 px-4">
+                  <td className="py-3.5 px-5 font-bold text-slate-900">{emp.name}</td>
+                  <td className="py-3.5 px-5">
                     <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                        emp.category === 'VIP'
-                          ? 'bg-purple-100 text-purple-800'
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                        emp.category === 'JUNIOR'
+                          ? 'bg-[#ecfdf5] text-[#00a651]'
                           : emp.category === 'SENIOR'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-emerald-100 text-emerald-800'
+                          ? 'bg-[#f0f9ff] text-[#0284c7]'
+                          : 'bg-purple-50 text-purple-700'
                       }`}
                     >
                       {emp.category}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-slate-500">{emp.department || '—'}</td>
-                  <td className="py-3 px-4 text-slate-500">{emp.contactNumber || '—'}</td>
-                  <td className="py-3 px-4">
+                  <td className="py-3.5 px-5 text-slate-600 font-medium">{emp.department || '—'}</td>
+                  <td className="py-3.5 px-5 text-slate-600 font-mono">{emp.contactNumber || '—'}</td>
+                  <td className="py-3.5 px-5">
                     {emp.hasActiveAllotment ? (
-                      <span className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 bg-amber-50 px-2 py-1 rounded-md border border-amber-200">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        Active Allotment
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                        ● Active Stay
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200">
-                        Available for Stay
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#00a651] bg-[#ecfdf5] px-2.5 py-1 rounded-full border border-[#a7f3d0]">
+                        ✓ Available
                       </span>
                     )}
                   </td>
@@ -173,51 +180,51 @@ export const EmployeeList: React.FC = () => {
 
       {/* Modal for Registering Employee */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 border border-slate-200">
-            <h3 className="text-lg font-bold text-slate-900 mb-4">Register New Employee</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-200">
+            <h3 className="text-base font-bold text-slate-900 mb-4">Register New Staff Member</h3>
             {formError && (
-              <div className="mb-4 p-3 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 text-xs">
+              <div className="mb-4 p-3 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-xs">
                 {formError}
               </div>
             )}
             <form onSubmit={handleCreateEmployee} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Employee ID *
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. EMP-1010"
+                  placeholder="e.g. AHP-1001"
                   value={employeeId}
                   onChange={(e) => setEmployeeId(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs uppercase focus:outline-none focus:ring-2 focus:ring-[#00a651]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Full Name *
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Salim Al-Maskari"
+                  placeholder="e.g. Tariq Al-Balushi"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#00a651]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Designated Category *
                 </label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value as EmployeeCategory)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#00a651]"
                 >
                   <option value={EmployeeCategory.JUNIOR}>Junior (Bed Allocation)</option>
                   <option value={EmployeeCategory.SENIOR}>Senior (Portion Allocation)</option>
@@ -226,20 +233,20 @@ export const EmployeeList: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Department
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Operations, Logistics"
+                  placeholder="e.g. Operations, Field Logistics"
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#00a651]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Contact Number
                 </label>
                 <input
@@ -247,7 +254,7 @@ export const EmployeeList: React.FC = () => {
                   placeholder="e.g. +968 9123 4567"
                   value={contactNumber}
                   onChange={(e) => setContactNumber(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#00a651]"
                 />
               </div>
 
@@ -255,15 +262,15 @@ export const EmployeeList: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 hover:bg-slate-50"
+                  className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-sm font-medium shadow-sm"
+                  className="px-4 py-2 bg-[#00a651] hover:bg-[#008c44] text-white rounded-xl text-xs font-bold shadow-md shadow-[#00a651]/20"
                 >
-                  Save Employee
+                  Save Staff Member
                 </button>
               </div>
             </form>
