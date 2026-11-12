@@ -127,54 +127,57 @@ export const EmployeeList: React.FC = () => {
         ) : employees.length === 0 ? (
           <div className="p-8 text-center text-slate-400 text-xs">No employees found.</div>
         ) : (
-          <table className="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr className="bg-slate-50/80 border-b border-slate-200/80 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
-                <th className="py-3 px-5">Employee ID</th>
-                <th className="py-3 px-5">Staff Name</th>
-                <th className="py-3 px-5">Category</th>
-                <th className="py-3 px-5">Department</th>
-                <th className="py-3 px-5">Contact</th>
-                <th className="py-3 px-5">Allotment Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {employees.map((emp) => (
-                <tr key={emp._id} className="hover:bg-slate-50/70 transition">
-                  <td className="py-3.5 px-5 font-mono font-bold text-slate-800">
-                    {emp.employeeId}
-                  </td>
-                  <td className="py-3.5 px-5 font-bold text-slate-900">{emp.name}</td>
-                  <td className="py-3.5 px-5">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                        emp.category === 'JUNIOR'
-                          ? 'bg-[#ecfdf5] text-[#00a651]'
-                          : emp.category === 'SENIOR'
-                          ? 'bg-[#f0f9ff] text-[#0284c7]'
-                          : 'bg-purple-50 text-purple-700'
-                      }`}
-                    >
-                      {emp.category}
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-5 text-slate-600 font-medium">{emp.department || '—'}</td>
-                  <td className="py-3.5 px-5 text-slate-600 font-mono">{emp.contactNumber || '—'}</td>
-                  <td className="py-3.5 px-5">
-                    {emp.hasActiveAllotment ? (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
-                        ● Active Stay
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#00a651] bg-[#ecfdf5] px-2.5 py-1 rounded-full border border-[#a7f3d0]">
-                        ✓ Available
-                      </span>
-                    )}
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="bg-slate-50/80 border-b border-slate-200/80 text-slate-400 font-bold uppercase tracking-wider text-[11px]">
+                  <th className="py-4 px-6 w-36 whitespace-nowrap">Employee ID</th>
+                  <th className="py-4 px-6 min-w-[160px]">Staff Name</th>
+                  <th className="py-4 px-6 w-32 whitespace-nowrap">Category</th>
+                  <th className="py-4 px-6 min-w-[150px]">Department</th>
+                  <th className="py-4 px-6 w-44 whitespace-nowrap">Contact</th>
+                  <th className="py-4 px-6 w-36 whitespace-nowrap">Allotment Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {employees.map((emp) => (
+                  <tr key={emp._id} className="hover:bg-slate-50/70 transition">
+                    <td className="py-4 px-6 font-mono font-bold text-slate-800 whitespace-nowrap">
+                      {emp.employeeId}
+                    </td>
+                    <td className="py-4 px-6 font-bold text-slate-900 capitalize">{emp.name}</td>
+                    <td className="py-4 px-6 whitespace-nowrap">
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold ${
+                          emp.category === 'JUNIOR'
+                            ? 'bg-[#ecfdf5] text-[#00a651]'
+                            : emp.category === 'SENIOR'
+                            ? 'bg-[#f0f9ff] text-[#0284c7]'
+                            : 'bg-purple-50 text-purple-700'
+                        }`}
+                      >
+                        {emp.category}
+                      </span>
+                    </td>
+                    <td className="py-4 px-6 text-slate-600 font-medium">{emp.department || '—'}</td>
+                    <td className="py-4 px-6 text-slate-600 font-mono whitespace-nowrap">{emp.contactNumber || '—'}</td>
+                    <td className="py-4 px-6 whitespace-nowrap">
+                      {emp.hasActiveAllotment ? (
+                        <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#00a651]"></span>
+                          Active Stay
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
+                          ✓ Available
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
