@@ -243,99 +243,97 @@ export const AllotmentList: React.FC = () => {
         ) : allotments.length === 0 ? (
           <div className="p-8 text-center text-slate-400 text-xs">No active allotments found.</div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
-              <thead>
-                <tr className="bg-slate-50/80 border-b border-slate-200/80 text-slate-400 font-bold uppercase tracking-wider text-[11px]">
-                  <th className="py-4 px-6 w-32 whitespace-nowrap">Date & Time</th>
-                  <th className="py-4 px-6 w-32 whitespace-nowrap">Employee ID</th>
-                  <th className="py-4 px-6 min-w-[140px]">Staff Name</th>
-                  <th className="py-4 px-6 w-28 whitespace-nowrap">Category</th>
-                  <th className="py-4 px-6 min-w-[200px]">Allocated Unit</th>
-                  <th className="py-4 px-6 w-36 whitespace-nowrap">Planned Duration</th>
-                  <th className="py-4 px-6 w-32 whitespace-nowrap">Status</th>
-                  <th className="py-4 px-6 w-36 text-right whitespace-nowrap">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {allotments.map((item) => (
-                  <tr key={item._id} className="hover:bg-slate-50/70 transition">
-                    <td className="py-4 px-6 font-mono text-slate-600 whitespace-nowrap">
-                      {formatDate(item.createdAt)}
-                    </td>
-                    <td className="py-4 px-6 font-mono font-bold text-slate-800 whitespace-nowrap">
-                      {item.employeeId?.employeeId}
-                    </td>
-                    <td className="py-4 px-6 font-bold text-slate-900 capitalize">
-                      {item.employeeId?.name}
-                    </td>
-                    <td className="py-4 px-6 whitespace-nowrap">
-                      <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold ${
-                          item.employeeId?.category === 'JUNIOR'
-                            ? 'bg-[#ecfdf5] text-[#00a651]'
-                            : item.employeeId?.category === 'SENIOR'
-                            ? 'bg-[#f0f9ff] text-[#0284c7]'
-                            : 'bg-purple-50 text-purple-700'
-                        }`}
+          <table className="w-full text-left border-collapse text-xs table-auto">
+            <thead>
+              <tr className="bg-slate-50/80 border-b border-slate-200/80 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                <th className="py-3.5 px-3">Date</th>
+                <th className="py-3.5 px-3">Emp ID</th>
+                <th className="py-3.5 px-3">Staff Name</th>
+                <th className="py-3.5 px-3">Category</th>
+                <th className="py-3.5 px-3">Allocated Unit</th>
+                <th className="py-3.5 px-3">Stay</th>
+                <th className="py-3.5 px-3 text-center">Status</th>
+                <th className="py-3.5 px-3 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {allotments.map((item) => (
+                <tr key={item._id} className="hover:bg-slate-50/70 transition">
+                  <td className="py-3 px-3 font-mono text-slate-600 whitespace-nowrap">
+                    {formatDate(item.createdAt)}
+                  </td>
+                  <td className="py-3 px-3 font-mono font-bold text-slate-800 whitespace-nowrap">
+                    {item.employeeId?.employeeId}
+                  </td>
+                  <td className="py-3 px-3 font-bold text-slate-900 capitalize whitespace-nowrap">
+                    {item.employeeId?.name}
+                  </td>
+                  <td className="py-3 px-3 whitespace-nowrap">
+                    <span
+                      className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                        item.employeeId?.category === 'JUNIOR'
+                          ? 'bg-[#ecfdf5] text-[#00a651]'
+                          : item.employeeId?.category === 'SENIOR'
+                          ? 'bg-[#f0f9ff] text-[#0284c7]'
+                          : 'bg-purple-50 text-purple-700'
+                      }`}
+                    >
+                      {item.employeeId?.category}
+                    </span>
+                  </td>
+                  <td className="py-3 px-3">
+                    <div className="font-mono font-semibold text-slate-800 whitespace-nowrap">
+                      {item.allocationUnitId?.unitCode}
+                    </div>
+                    <div className="text-[10px] text-slate-400 font-sans font-normal truncate max-w-[170px]">
+                      {item.bootcampId?.name}
+                    </div>
+                  </td>
+                  <td className="py-3 px-3 whitespace-nowrap">
+                    <span className="font-semibold text-slate-800">
+                      {item.plannedStayDuration}d
+                    </span>
+                    <span className="block text-[10px] text-slate-400">
+                      Out: {formatDate(item.checkoutDate || item.expectedCheckoutDate)}
+                    </span>
+                  </td>
+                  <td className="py-3 px-3 text-center whitespace-nowrap">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#ecfdf5] text-[#00a651] border border-[#a7f3d0]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#00a651]"></span>
+                      Active
+                    </span>
+                  </td>
+                  <td className="py-3 px-3 text-right whitespace-nowrap">
+                    <div className="inline-flex items-center justify-end gap-1.5">
+                      <button
+                        onClick={() => {
+                          setSelectedAllotment(item);
+                          setActionDate(new Date().toISOString().split('T')[0]);
+                          setIsCheckOutModalOpen(true);
+                        }}
+                        className="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 transition text-[11px] font-bold inline-flex items-center gap-1 border border-rose-200"
                       >
-                        {item.employeeId?.category}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6">
-                      <div className="font-mono font-semibold text-slate-800 whitespace-nowrap">
-                        {item.allocationUnitId?.unitCode}
-                      </div>
-                      <div className="text-[11px] text-slate-400 font-sans font-normal truncate max-w-[220px]">
-                        {item.bootcampId?.name}
-                      </div>
-                    </td>
-                    <td className="py-4 px-6 whitespace-nowrap">
-                      <span className="font-semibold text-slate-800">
-                        {item.plannedStayDuration} Days
-                      </span>
-                      <span className="block text-[11px] text-slate-400 mt-0.5">
-                        Checkout: {formatDate(item.checkoutDate || item.expectedCheckoutDate)}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6 whitespace-nowrap">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-[#ecfdf5] text-[#00a651] border border-[#a7f3d0]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#00a651]"></span>
-                        Active Stay
-                      </span>
-                    </td>
-                    <td className="py-4 px-6 text-right whitespace-nowrap">
-                      <div className="inline-flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => {
-                            setSelectedAllotment(item);
-                            setActionDate(new Date().toISOString().split('T')[0]);
-                            setIsCheckOutModalOpen(true);
-                          }}
-                          className="px-3.5 py-1.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 transition text-xs font-semibold inline-flex items-center gap-1.5 border border-rose-200 shadow-sm"
-                        >
-                          <LogOut className="w-3.5 h-3.5" />
-                          Check-Out
-                        </button>
+                        <LogOut className="w-3 h-3" />
+                        Check-Out
+                      </button>
 
-                        <button
-                          onClick={() => {
-                            setSelectedAllotment(item);
-                            setNewDuration(item.plannedStayDuration);
-                            setIsDurationModalOpen(true);
-                          }}
-                          title="Edit Duration"
-                          className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 border border-slate-200 transition shadow-sm"
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      <button
+                        onClick={() => {
+                          setSelectedAllotment(item);
+                          setNewDuration(item.plannedStayDuration);
+                          setIsDurationModalOpen(true);
+                        }}
+                        title="Edit Duration"
+                        className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 border border-slate-200 transition"
+                      >
+                        <Edit2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
 

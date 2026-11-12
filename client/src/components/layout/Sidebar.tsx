@@ -27,21 +27,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => 
   ];
 
   return (
-    <aside className="w-64 bg-[#0a192f] text-slate-300 flex flex-col justify-between shrink-0 min-h-screen border-r border-slate-800/80">
+    <aside className="w-56 bg-[#0a192f] text-slate-300 flex flex-col justify-between shrink-0 min-h-screen border-r border-slate-800/80">
       <div>
         {/* Brand Logo Container matching the Al Haditha Energy card */}
-        <div className="p-6">
-          <div className="bg-white rounded-2xl p-4 flex items-center justify-center shadow-md border border-slate-200/50">
+        <div className="p-4">
+          <div className="bg-white rounded-xl p-3 flex items-center justify-center shadow-md border border-slate-200/50">
             <img
               src={logoImg}
               alt="Al Haditha Energy Logo"
-              className="h-12 w-auto object-contain"
+              className="h-10 w-auto object-contain"
             />
           </div>
         </div>
 
         {/* Navigation Menu */}
-        <nav className="px-4 space-y-2 mt-2">
+        <nav className="px-3 space-y-1.5 mt-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentTab === item.id;
@@ -49,13 +49,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => 
               <button
                 key={item.id}
                 onClick={() => onSelectTab(item.id)}
-                className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition duration-150 ${
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition duration-150 ${
                   isActive
-                    ? 'bg-[#00a651] text-white shadow-lg shadow-[#00a651]/20 font-semibold'
+                    ? 'bg-[#00a651] text-white shadow-md shadow-[#00a651]/20 font-semibold'
                     : 'text-slate-300 hover:text-white hover:bg-[#132844]'
                 }`}
               >
-                <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                 <span>{item.label}</span>
               </button>
             );
@@ -64,12 +64,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => 
       </div>
 
       {/* Logout button at bottom of sidebar matching the UI screenshot */}
-      <div className="p-4 border-t border-slate-800/80">
+      <div className="p-3 border-t border-slate-800/80">
         <button
           onClick={logout}
-          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-950/20 rounded-xl transition duration-150"
+          className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-950/20 rounded-xl transition duration-150"
         >
-          <LogOut className="w-5 h-5" />
+          <LogOut className="w-4 h-4" />
           <span>Logout</span>
         </button>
       </div>

@@ -15,7 +15,7 @@ export const Header: React.FC<HeaderProps> = () => {
   });
 
   return (
-    <header className="px-8 py-6 flex items-center justify-between">
+    <header className="px-4 lg:px-6 py-4 flex items-center justify-between">
       <div>
         <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
           Welcome Back,
