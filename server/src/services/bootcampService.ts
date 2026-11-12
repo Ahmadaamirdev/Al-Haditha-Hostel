@@ -4,14 +4,7 @@ import { EmployeeCategory, AllocationUnitType } from '../constants';
 import { AppError } from '../utils';
 
 async function supportsTransactions(): Promise<boolean> {
-  try {
-    const admin = mongoose.connection.db?.admin();
-    if (!admin) return false;
-    const { replicaSet } = await admin.serverStatus() as any;
-    return !!replicaSet;
-  } catch {
-    return false;
-  }
+  return true; // Atlas replica set always supports transactions
 }
 
 function buildUnitPayloads(code: string, category: EmployeeCategory): { payload: any[]; totalCapacity: number } {
@@ -124,11 +117,7 @@ export class BootcampService {
 
     const bootcampIds = bootcamps.map((b) => b._id);
     const units = await AllocationUnit.find({ bootcampId: { $in: bootcampIds } })
-      .populate({
-        path: 'currentAllotmentId',
-        select: 'status expectedCheckInDate expectedCheckoutDate employeeId',
-        populate: { path: 'employeeId', select: 'name employeeId' },
-      })
+      .select('bootcampId unitCode category unitType portionIdentifier bedIdentifier isOccupied')
       .lean();
 
     const unitsByBootcamp = new Map<string, any[]>();

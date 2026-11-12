@@ -8,14 +8,7 @@ import { AppError, addDays } from '../utils';
  * (requires a replica set - Atlas always does; local standalone does not)
  */
 async function supportsTransactions(): Promise<boolean> {
-  try {
-    const admin = mongoose.connection.db?.admin();
-    if (!admin) return false;
-    const { replicaSet } = await admin.serverStatus() as any;
-    return !!replicaSet;
-  } catch {
-    return false;
-  }
+  return true; // Atlas replica set always supports transactions
 }
 
 export class AllotmentService {

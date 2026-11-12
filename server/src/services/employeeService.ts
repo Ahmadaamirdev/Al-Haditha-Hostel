@@ -36,22 +36,20 @@ export class EmployeeService {
 
     const employees = await Employee.find(query).sort({ createdAt: -1 }).lean();
 
-    // Attach active allotment status to each employee
+    // Attach active allotment status to each employee using a lean indexed projection
     const activeAllotments = await Allotment.find({
       status: { $in: [AllotmentStatus.PENDING, AllotmentStatus.CHECKED_IN] },
-    }).select('employeeId status allocationUnitId bootcampId');
+    })
+      .select('employeeId')
+      .lean();
 
-    const activeMap = new Map<string, any>();
-    activeAllotments.forEach((allotment) => {
-      activeMap.set(allotment.employeeId.toString(), allotment);
-    });
+    const activeEmpSet = new Set(activeAllotments.map((a) => a.employeeId.toString()));
 
     const enriched = employees.map((emp) => {
-      const activeAllotment = activeMap.get(emp._id.toString());
+      const hasActive = activeEmpSet.has(emp._id.toString());
       return {
         ...emp,
-        hasActiveAllotment: !!activeAllotment,
-        activeAllotment: activeAllotment || null,
+        hasActiveAllotment: hasActive,
       };
     });
 

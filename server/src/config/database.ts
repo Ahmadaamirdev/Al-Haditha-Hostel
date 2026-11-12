@@ -18,13 +18,16 @@ export const connectDB = async (): Promise<void> => {
 
   try {
     const conn = await mongoose.connect(config.mongodbUri, {
-      serverSelectionTimeoutMS: 10000,
+      maxPoolSize: 10, // Optimal pool size for serverless lambdas to avoid exhaustion
+      minPoolSize: 2,
+      maxIdleTimeMS: 30000,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
     });
     isConnected = true;
     console.log(`[Database] MongoDB Connected: ${conn.connection.host}`);
   } catch (error: any) {
     console.error('[Database] Connection Error:', error?.message || error);
-    // Don't exit process in serverless environment
     if (process.env.VERCEL) {
       throw error;
     }
