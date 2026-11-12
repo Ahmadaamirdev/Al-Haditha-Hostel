@@ -1,13 +1,46 @@
 import mongoose, { Types } from 'mongoose';
-import { Allotment, AllocationUnit, Employee, Bootcamp, IAllotment } from '../models';
+import { Allotment, AllocationUnit, Employee, IAllotment } from '../models';
 import { AllotmentStatus } from '../constants';
 import { AppError, addDays } from '../utils';
 
+/**
+ * Helper: determine if the connected MongoDB supports transactions
+ * (requires a replica set - Atlas always does; local standalone does not)
+ */
+async function supportsTransactions(): Promise<boolean> {
+  try {
+    const admin = mongoose.connection.db?.admin();
+    if (!admin) return false;
+    const { replicaSet } = await admin.serverStatus() as any;
+    return !!replicaSet;
+  } catch {
+    return false;
+  }
+}
+
 export class AllotmentService {
   /**
-   * Atomic allotment creation with concurrency locking
+   * Atomic allotment creation with concurrency locking.
+   * Uses MongoDB transactions when available (Atlas / replica set).
+   * Falls back to application-level guards for local standalone dev.
    */
   public static async createAllotment(data: {
+    employeeId: string;
+    allocationUnitId: string;
+    expectedCheckInDate: string;
+    plannedStayDuration: number;
+    createdById: string;
+    notes?: string;
+  }): Promise<IAllotment> {
+    const useTransactions = await supportsTransactions();
+
+    if (useTransactions) {
+      return AllotmentService._createWithTransaction(data);
+    }
+    return AllotmentService._createWithoutTransaction(data);
+  }
+
+  private static async _createWithTransaction(data: {
     employeeId: string;
     allocationUnitId: string;
     expectedCheckInDate: string;
@@ -19,11 +52,8 @@ export class AllotmentService {
     session.startTransaction();
 
     try {
-      // 1. Verify Employee exists & does not have an active allotment
       const employee = await Employee.findById(data.employeeId).session(session);
-      if (!employee) {
-        throw new AppError('Employee not found', 404, 'NOT_FOUND');
-      }
+      if (!employee) throw new AppError('Employee not found', 404, 'NOT_FOUND');
 
       const activeAllotment = await Allotment.findOne({
         employeeId: employee._id,
@@ -38,19 +68,10 @@ export class AllotmentService {
         );
       }
 
-      // 2. Atomic test-and-set reservation on AllocationUnit
       const unit = await AllocationUnit.findOneAndUpdate(
-        {
-          _id: new Types.ObjectId(data.allocationUnitId),
-          isOccupied: false,
-        },
-        {
-          $set: { isOccupied: true },
-        },
-        {
-          session,
-          new: true,
-        }
+        { _id: new Types.ObjectId(data.allocationUnitId), isOccupied: false },
+        { $set: { isOccupied: true } },
+        { session, new: true }
       );
 
       if (!unit) {
@@ -61,7 +82,6 @@ export class AllotmentService {
         );
       }
 
-      // Invariant check: Unit category must match Employee category
       if (unit.category !== employee.category) {
         throw new AppError(
           `Category mismatch: Employee is ${employee.category} but unit is ${unit.category}`,
@@ -70,29 +90,24 @@ export class AllotmentService {
         );
       }
 
-      // Calculate initial expected checkout from expected check-in
       const expectedCheckIn = new Date(data.expectedCheckInDate);
       const expectedCheckout = addDays(expectedCheckIn, data.plannedStayDuration);
 
-      // 3. Create Allotment record
       const [allotment] = await Allotment.create(
-        [
-          {
-            employeeId: employee._id,
-            bootcampId: unit.bootcampId,
-            allocationUnitId: unit._id,
-            expectedCheckInDate: expectedCheckIn,
-            plannedStayDuration: data.plannedStayDuration,
-            expectedCheckoutDate: expectedCheckout,
-            status: AllotmentStatus.PENDING,
-            createdById: new Types.ObjectId(data.createdById),
-            notes: data.notes,
-          },
-        ],
+        [{
+          employeeId: employee._id,
+          bootcampId: unit.bootcampId,
+          allocationUnitId: unit._id,
+          expectedCheckInDate: expectedCheckIn,
+          plannedStayDuration: data.plannedStayDuration,
+          expectedCheckoutDate: expectedCheckout,
+          status: AllotmentStatus.PENDING,
+          createdById: new Types.ObjectId(data.createdById),
+          notes: data.notes,
+        }],
         { session }
       );
 
-      // Link current allotment back to unit
       unit.currentAllotmentId = allotment._id as Types.ObjectId;
       await unit.save({ session });
 
@@ -106,10 +121,86 @@ export class AllotmentService {
     }
   }
 
+  private static async _createWithoutTransaction(data: {
+    employeeId: string;
+    allocationUnitId: string;
+    expectedCheckInDate: string;
+    plannedStayDuration: number;
+    createdById: string;
+    notes?: string;
+  }): Promise<IAllotment> {
+    const employee = await Employee.findById(data.employeeId);
+    if (!employee) throw new AppError('Employee not found', 404, 'NOT_FOUND');
+
+    const activeAllotment = await Allotment.findOne({
+      employeeId: employee._id,
+      status: { $in: [AllotmentStatus.PENDING, AllotmentStatus.CHECKED_IN] },
+    });
+
+    if (activeAllotment) {
+      throw new AppError(
+        `Employee ${employee.name} (${employee.employeeId}) already has an active allotment.`,
+        409,
+        'CONFLICT'
+      );
+    }
+
+    // Atomic test-and-set on unit (single-document atomic operation works without replica set)
+    const unit = await AllocationUnit.findOneAndUpdate(
+      { _id: new Types.ObjectId(data.allocationUnitId), isOccupied: false },
+      { $set: { isOccupied: true } },
+      { new: true }
+    );
+
+    if (!unit) {
+      throw new AppError(
+        'Selected unit is no longer available or was concurrently reserved.',
+        409,
+        'CONFLICT'
+      );
+    }
+
+    if (unit.category !== employee.category) {
+      // Roll back the unit lock since we won't be creating the allotment
+      await AllocationUnit.findByIdAndUpdate(unit._id, { $set: { isOccupied: false } });
+      throw new AppError(
+        `Category mismatch: Employee is ${employee.category} but unit is ${unit.category}`,
+        400,
+        'VALIDATION_ERROR'
+      );
+    }
+
+    const expectedCheckIn = new Date(data.expectedCheckInDate);
+    const expectedCheckout = addDays(expectedCheckIn, data.plannedStayDuration);
+
+    let allotment: IAllotment;
+    try {
+      allotment = await Allotment.create({
+        employeeId: employee._id,
+        bootcampId: unit.bootcampId,
+        allocationUnitId: unit._id,
+        expectedCheckInDate: expectedCheckIn,
+        plannedStayDuration: data.plannedStayDuration,
+        expectedCheckoutDate: expectedCheckout,
+        status: AllotmentStatus.PENDING,
+        createdById: new Types.ObjectId(data.createdById),
+        notes: data.notes,
+      });
+    } catch (err) {
+      // Roll back unit lock on allotment creation failure
+      await AllocationUnit.findByIdAndUpdate(unit._id, { $set: { isOccupied: false } });
+      throw err;
+    }
+
+    unit.currentAllotmentId = allotment._id as Types.ObjectId;
+    await unit.save();
+
+    return allotment;
+  }
+
   /**
-   * Manual Check-in Confirmation
-   * Enforces the approved rule:
-   * Expected Checkout = actualCheckInDate + plannedStayDuration
+   * Manual Check-in Confirmation.
+   * Recalculates expectedCheckoutDate from actualCheckInDate (approved business rule).
    */
   public static async confirmCheckIn(
     allotmentId: string,
@@ -117,9 +208,7 @@ export class AllotmentService {
     adminUserId: string
   ): Promise<IAllotment> {
     const allotment = await Allotment.findById(allotmentId);
-    if (!allotment) {
-      throw new AppError('Allotment not found', 404, 'NOT_FOUND');
-    }
+    if (!allotment) throw new AppError('Allotment not found', 404, 'NOT_FOUND');
 
     if (allotment.status !== AllotmentStatus.PENDING) {
       throw new AppError(
@@ -142,77 +231,84 @@ export class AllotmentService {
   }
 
   /**
-   * Manual Checkout Confirmation
-   * Releases the allocation unit atomically and marks allotment as COMPLETED
+   * Manual Checkout Confirmation.
+   * Atomically releases the allocation unit and marks allotment as COMPLETED.
    */
   public static async confirmCheckOut(
     allotmentId: string,
     actualCheckoutDateStr: string,
     adminUserId: string
   ): Promise<IAllotment> {
-    const session = await mongoose.startSession();
-    session.startTransaction();
+    const allotment = await Allotment.findById(allotmentId);
+    if (!allotment) throw new AppError('Allotment not found', 404, 'NOT_FOUND');
 
-    try {
-      const allotment = await Allotment.findById(allotmentId).session(session);
-      if (!allotment) {
-        throw new AppError('Allotment not found', 404, 'NOT_FOUND');
-      }
+    if (allotment.status !== AllotmentStatus.CHECKED_IN) {
+      throw new AppError(
+        `Cannot checkout allotment in status: ${allotment.status}. Must be CHECKED_IN.`,
+        400,
+        'INVALID_STATE'
+      );
+    }
 
-      if (allotment.status !== AllotmentStatus.CHECKED_IN) {
-        throw new AppError(
-          `Cannot checkout allotment in status: ${allotment.status}. Must be CHECKED_IN.`,
-          400,
-          'INVALID_STATE'
+    const useTransactions = await supportsTransactions();
+
+    if (useTransactions) {
+      const session = await mongoose.startSession();
+      session.startTransaction();
+      try {
+        allotment.actualCheckoutDate = new Date(actualCheckoutDateStr);
+        allotment.status = AllotmentStatus.COMPLETED;
+        allotment.checkOutConfirmedById = new Types.ObjectId(adminUserId);
+        await allotment.save({ session });
+
+        await AllocationUnit.findByIdAndUpdate(
+          allotment.allocationUnitId,
+          { $set: { isOccupied: false, currentAllotmentId: null } },
+          { session }
         );
-      }
 
+        await session.commitTransaction();
+        return allotment;
+      } catch (err) {
+        await session.abortTransaction();
+        throw err;
+      } finally {
+        session.endSession();
+      }
+    } else {
       allotment.actualCheckoutDate = new Date(actualCheckoutDateStr);
       allotment.status = AllotmentStatus.COMPLETED;
       allotment.checkOutConfirmedById = new Types.ObjectId(adminUserId);
-      await allotment.save({ session });
+      await allotment.save();
 
-      // Atomically release the unit
       await AllocationUnit.findByIdAndUpdate(
         allotment.allocationUnitId,
-        {
-          $set: {
-            isOccupied: false,
-            currentAllotmentId: null,
-          },
-        },
-        { session }
+        { $set: { isOccupied: false, currentAllotmentId: null } }
       );
 
-      await session.commitTransaction();
       return allotment;
-    } catch (err) {
-      await session.abortTransaction();
-      throw err;
-    } finally {
-      session.endSession();
     }
   }
 
   /**
-   * Adjust stay duration and recalculate expected checkout
+   * Adjust stay duration and recalculate expected checkout.
+   * Uses actualCheckInDate as base if checked in (approved business rule).
    */
   public static async updateDuration(
     allotmentId: string,
     newDuration: number
   ): Promise<IAllotment> {
     const allotment = await Allotment.findById(allotmentId);
-    if (!allotment) {
-      throw new AppError('Allotment not found', 404, 'NOT_FOUND');
-    }
+    if (!allotment) throw new AppError('Allotment not found', 404, 'NOT_FOUND');
 
-    if (allotment.status !== AllotmentStatus.PENDING && allotment.status !== AllotmentStatus.CHECKED_IN) {
+    if (
+      allotment.status !== AllotmentStatus.PENDING &&
+      allotment.status !== AllotmentStatus.CHECKED_IN
+    ) {
       throw new AppError('Cannot modify duration for non-active allotment', 400, 'INVALID_STATE');
     }
 
     allotment.plannedStayDuration = newDuration;
-
-    // If checked in, recalculate from actualCheckInDate; otherwise from expectedCheckInDate
     const baseDate = allotment.actualCheckInDate || allotment.expectedCheckInDate;
     allotment.expectedCheckoutDate = addDays(baseDate, newDuration);
 
@@ -221,7 +317,8 @@ export class AllotmentService {
   }
 
   /**
-   * Fetch active allotments ONLY (PENDING and CHECKED_IN)
+   * Fetch active allotments ONLY (PENDING and CHECKED_IN).
+   * Completed allotments are preserved in DB but never returned here.
    */
   public static async getActiveAllotments(filters: {
     status?: AllotmentStatus;
@@ -248,16 +345,10 @@ export class AllotmentService {
         const empId = item.employeeId?.employeeId?.toLowerCase() || '';
         const bcCode = item.bootcampId?.bootcampCode?.toLowerCase() || '';
         const uCode = item.allocationUnitId?.unitCode?.toLowerCase() || '';
-        return (
-          empName.includes(s) ||
-          empId.includes(s) ||
-          bcCode.includes(s) ||
-          uCode.includes(s)
-        );
+        return empName.includes(s) || empId.includes(s) || bcCode.includes(s) || uCode.includes(s);
       });
     }
 
     return allotments;
   }
 }
-

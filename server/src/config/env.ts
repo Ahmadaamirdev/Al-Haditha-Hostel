@@ -1,7 +1,14 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+// Works in both CommonJS (tsx) and compiled JS
+const envPath = path.resolve(process.cwd(), 'server', '.env');
+dotenv.config({ path: envPath });
+
+// Fallback: also try loading from the cwd directly
+if (!process.env.MONGODB_URI) {
+  dotenv.config();
+}
 
 export const config = {
   env: process.env.NODE_ENV || 'development',
@@ -12,4 +19,3 @@ export const config = {
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
   upcomingDaysThreshold: parseInt(process.env.UPCOMING_CHECKOUT_DAYS_THRESHOLD || '2', 10),
 };
-
