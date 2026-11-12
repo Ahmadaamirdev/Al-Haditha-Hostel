@@ -147,3 +147,4 @@ erDiagram
 +---------------------------------------------------------------------------------------------------+
 ```
 This diagram demonstrates that checkout operations on `PA-Bed1` exclusively unlock `PA-Bed1` without mutating adjoining siblings.
+

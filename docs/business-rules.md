@@ -49,11 +49,13 @@
   $$\text{Expected Checkout Date} = \text{Start Date} + (\text{Planned Stay Duration in Days})$$
 - When an administrator modifies `plannedStayDuration`, the system automatically recomputes `expectedCheckoutDate`.
 
-### 3.2. Pending Decision on Check-In Shift:
-- If `actualCheckInDate` differs from `expectedCheckInDate`:
-  - **Option A (Recommended)**: Recalculate `expectedCheckoutDate = actualCheckInDate + plannedStayDuration`.
-  - **Option B**: Retain original `expectedCheckoutDate` regardless of late arrival.
-  - *Status*: Documented as pending business confirmation. Both dates are maintained in the schema.
+### 3.2. Check-In Date Shift Rule (Approved & Enforced):
+When an administrator confirms physical arrival:
+- The administrator records `actualCheckInDate`.
+- The system automatically recalculates:
+  $$\text{expectedCheckoutDate} = \text{actualCheckInDate} + (\text{plannedStayDuration in Days})$$
+- This ensures the employee is afforded the complete duration of their allocated training or assignment, without premature eviction caused by transit delays.
+- If the administrator later updates `plannedStayDuration`, the new checkout date recalculates from `actualCheckInDate` (for checked-in allotments) or from `expectedCheckInDate` (for pending allotments).
 
 ---
 
@@ -116,3 +118,4 @@ Two administrators simultaneously attempt to allot the exact same bed (or Senior
    }
    ```
    physically blocks a second active allotment document from being committed for the same unit with a `11000 Duplicate Key Error`.
+

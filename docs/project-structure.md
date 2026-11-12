@@ -89,3 +89,4 @@ al-haditha-hostel-management/
 - `components/common/`: Shared, reusable, non-domain components (e.g., generic table, modal, alert banner).
 - `services/apiClient.ts`: Single point of Axios/Fetch configuration with automatic JWT injection, base URL handling, and standardized error response unwrapping.
 - **State Management**: Simple React Context for the administrative user session (`AuthContext`). All other state remains local to features to prevent state pollution and unnecessary re-renders.
+

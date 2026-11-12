@@ -68,12 +68,12 @@ Store all allotment records in the `allotments` collection with an updated lifec
 
 ## ADR 005: Stay Duration Recalculation Baseline (Expected vs. Actual Check-In)
 
-### Status: PENDING BUSINESS CONFIRMATION
+### Status: APPROVED (Stakeholder Confirmed)
 ### Context:
-When an employee arrives on an actual check-in date that differs from their expected check-in date, how should the expected checkout date be computed?
+When an employee arrives on an actual check-in date that differs from their expected check-in date, how should the expected checkout date be computed upon physical check-in confirmation?
 
 ### Options Considered:
-- **Option 1 (Architect Recommendation)**: Baseline from `actualCheckInDate`.
+- **Option 1 (Architect Recommendation - SELECTED)**: Baseline from `actualCheckInDate`.
   $$\text{Expected Checkout} = \text{Actual Check-In} + \text{Planned Stay Duration}$$
   *Rationale*: If an employee arrives 2 days late for a 14-day training course, cutting their stay short by 2 days disrupts their lodging. Physical stay duration is what dictates lodging needs.
 - **Option 2 (Strict Booking Window)**: Baseline from `expectedCheckInDate`.
@@ -81,4 +81,5 @@ When an employee arrives on an actual check-in date that differs from their expe
   *Rationale*: Fixed schedule slot regardless of late arrival.
 
 ### Resolution:
-Marked as **PENDING FORMAL APPROVAL**. The schema supports both dates independently; business logic will be bound upon stakeholder confirmation.
+Stakeholder explicitly approved **Option 1**: upon manual administrative check-in confirmation, `expectedCheckoutDate` is automatically recalculated from `actualCheckInDate + plannedStayDuration`. Prior to actual check-in, the initial `expectedCheckoutDate` remains calculated from `expectedCheckInDate + plannedStayDuration`.
+

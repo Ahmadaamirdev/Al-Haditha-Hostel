@@ -104,11 +104,14 @@ The system calculates real-time notifications on the fly without introducing ext
 
 ---
 
-## 8. Unresolved Decisions & Business Recommendations
+## 8. Resolved Decisions & Business Invariants
 
-### 8.1. Pending Decision: Stay Duration Recalculation Origin
+### 8.1. Resolved Decision: Stay Duration Recalculation Origin
 - **The Issue**: When an employee physically checks in on a date different from their `Expected Check-In Date` (e.g., arrived 2 days late), does the stay duration calculation begin from:
   1. The **Expected Check-In Date** (contractual booking period)?
   2. The **Actual Confirmed Check-In Date** (actual physical occupation)?
-- **Architectural Recommendation**: Use the **Actual Confirmed Check-In Date** as the starting point upon confirmation (`Expected Checkout = Actual Check-In + Planned Stay Duration`), because hostel accommodation capacity is tied to physical presence, preventing artificial early checkouts.
-- **Current Status**: **PENDING FORMAL CLIENT APPROVAL**. The data schema preserves both `expectedCheckInDate` and `actualCheckInDate` independently to accommodate either decision seamlessly.
+- **Final Decision (Approved by Stakeholder)**: Use the **Actual Confirmed Check-In Date** as the starting point upon confirmation.
+  $$\text{Expected Checkout Date} = \text{Actual Confirmed Check-In Date} + \text{Planned Stay Duration (in Days)}$$
+  Hostel accommodation capacity and duration are tied to physical presence, preventing artificial early checkouts and ensuring employees receive their full planned duration of stay.
+- **Current Status**: **RESOLVED & APPROVED**. Both `expectedCheckInDate` and `actualCheckInDate` are preserved in the database for auditing and operational tracking.
+

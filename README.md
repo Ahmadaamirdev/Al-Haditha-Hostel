@@ -101,3 +101,4 @@ All technical deliverables reside in the `/docs` directory:
 - [project-structure.md](docs/project-structure.md): Workspace folder organization and layer responsibilities.
 - [business-rules.md](docs/business-rules.md): Category rules, concurrency locking, and stay logic.
 - [architecture-decisions.md](docs/architecture-decisions.md): Architecture Decision Records (ADR 001–005).
+
