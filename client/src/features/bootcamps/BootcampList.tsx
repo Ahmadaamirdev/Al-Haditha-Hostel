@@ -204,23 +204,14 @@ export const BootcampList: React.FC = () => {
                   <div className="w-7 h-7 shrink-0 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center">
                     <Building2 className="w-3.5 h-3.5" />
                   </div>
-                  <div className="min-w-0">
-                    <div className="font-mono text-[13px] font-medium text-slate-900 truncate">
-                      {bc.bootcampCode}
-                    </div>
-                    <div className="text-[12px] text-[#64748b] truncate leading-tight">
-                      {bc.name}
-                      {bc.locationBlock && ` · ${bc.locationBlock}`}
-                    </div>
+                  <div className="font-mono text-[13px] font-medium text-slate-900 truncate">
+                    {bc.bootcampCode}
                   </div>
                 </div>
 
                 <div className="text-right shrink-0">
                   <div className="text-[12px] font-medium text-slate-800 whitespace-nowrap">
                     {bc.occupiedCount}/{bc.totalCapacity}
-                  </div>
-                  <div className="text-[12px] font-medium text-[#00a651] whitespace-nowrap">
-                    {bc.availableCount} free
                   </div>
                 </div>
               </div>

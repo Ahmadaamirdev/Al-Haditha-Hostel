@@ -305,9 +305,6 @@ export const AllotmentList: React.FC = () => {
                       <div className="font-mono font-medium text-slate-800 whitespace-nowrap">
                         {formatUnitCode(item.allocationUnitId?.unitCode)}
                       </div>
-                      <div className="text-[12px] text-[#64748b] font-sans truncate max-w-[170px]">
-                        {item.bootcampId?.name}
-                      </div>
                     </td>
                     <td className="py-3 px-3 whitespace-nowrap">
                       <span className="font-medium text-slate-800">

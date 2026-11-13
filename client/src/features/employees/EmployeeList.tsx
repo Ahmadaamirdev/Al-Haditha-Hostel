@@ -14,8 +14,6 @@ export const EmployeeList: React.FC = () => {
   const [employeeId, setEmployeeId] = useState('');
   const [name, setName] = useState('');
   const [category, setCategory] = useState<EmployeeCategory>(EmployeeCategory.JUNIOR);
-  const [department, setDepartment] = useState('');
-  const [contactNumber, setContactNumber] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
 
   const fetchEmployees = async () => {
@@ -48,15 +46,11 @@ export const EmployeeList: React.FC = () => {
           employeeId,
           name,
           category,
-          department,
-          contactNumber,
         }),
       });
       setIsModalOpen(false);
       setEmployeeId('');
       setName('');
-      setDepartment('');
-      setContactNumber('');
       fetchEmployees();
     } catch (err: any) {
       setFormError(err.message || 'Failed to register employee');
@@ -134,8 +128,6 @@ export const EmployeeList: React.FC = () => {
                   <th className="py-3.5 px-5 w-36 whitespace-nowrap">Employee ID</th>
                   <th className="py-3.5 px-5 min-w-[160px]">Staff Name</th>
                   <th className="py-3.5 px-5 w-32 whitespace-nowrap">Category</th>
-                  <th className="py-3.5 px-5 min-w-[150px]">Department</th>
-                  <th className="py-3.5 px-5 w-44 whitespace-nowrap">Contact</th>
                   <th className="py-3.5 px-5 w-36 whitespace-nowrap">Allotment Status</th>
                 </tr>
               </thead>
@@ -159,8 +151,6 @@ export const EmployeeList: React.FC = () => {
                         {emp.category}
                       </span>
                     </td>
-                    <td className="py-3.5 px-5 text-slate-600 font-normal">{emp.department || '—'}</td>
-                    <td className="py-3.5 px-5 text-slate-600 font-mono whitespace-nowrap">{emp.contactNumber || '—'}</td>
                     <td className="py-3.5 px-5 whitespace-nowrap">
                       {emp.hasActiveAllotment ? (
                         <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
@@ -233,32 +223,6 @@ export const EmployeeList: React.FC = () => {
                   <option value={EmployeeCategory.SENIOR}>Senior (Portion Allocation)</option>
                   <option value={EmployeeCategory.VIP}>VIP (Entire Bootcamp Allocation)</option>
                 </select>
-              </div>
-
-              <div>
-                <label className="block text-[12px] font-medium text-slate-700 mb-1">
-                  Department
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Operations, Field Logistics"
-                  value={department}
-                  onChange={(e) => setDepartment(e.target.value)}
-                  className="w-full px-3.5 py-2 border border-[#e5e9f0] rounded-[8px] text-[13px] focus:outline-none focus:ring-2 focus:ring-[#00a651]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[12px] font-medium text-slate-700 mb-1">
-                  Contact Number
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. +968 9123 4567"
-                  value={contactNumber}
-                  onChange={(e) => setContactNumber(e.target.value)}
-                  className="w-full px-3.5 py-2 border border-[#e5e9f0] rounded-[8px] text-[13px] focus:outline-none focus:ring-2 focus:ring-[#00a651]"
-                />
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-3">
