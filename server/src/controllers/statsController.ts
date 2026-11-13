@@ -67,7 +67,7 @@ export const getStats = async (_req: Request, res: Response, next: NextFunction)
         byCategory: bcMap,
       },
       activeStays: activeStayCount,
-    });
+    }, undefined, 200, 30);
   } catch (err) {
     next(err);
   }

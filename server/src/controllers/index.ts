@@ -38,7 +38,7 @@ export const getEmployees = async (req: Request, res: Response, next: NextFuncti
         hasActiveAllotment !== undefined ? hasActiveAllotment === 'true' : undefined,
       search: search as string,
     });
-    sendSuccess(res, employees);
+    sendSuccess(res, employees, undefined, 200, 30);
   } catch (err) {
     next(err);
   }
@@ -70,7 +70,7 @@ export const getBootcamps = async (req: Request, res: Response, next: NextFuncti
       category: category as any,
       isActive: isActive !== undefined ? isActive === 'true' : undefined,
     });
-    sendSuccess(res, bootcamps);
+    sendSuccess(res, bootcamps, undefined, 200, 60);
   } catch (err) {
     next(err);
   }

@@ -46,14 +46,14 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const loadDashboardData = async () => {
+  const loadDashboardData = async (opts: { skipCache?: boolean } = {}) => {
     try {
       const [statsData, notifications] = await Promise.all([
-        apiRequest<any>('/stats'),
+        apiRequest<any>('/stats', { skipCache: opts.skipCache }),
         apiRequest<{
           summary: { upcomingCount: number; dueTodayCount: number; overdueCount: number };
           alerts: NotificationItem[];
-        }>('/notifications'),
+        }>('/notifications', { skipCache: opts.skipCache }),
       ]);
 
       setStats({
@@ -89,7 +89,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
 
   const handleManualRefresh = () => {
     setRefreshing(true);
-    loadDashboardData();
+    loadDashboardData({ skipCache: true });
   };
 
   const juniorPct = stats.juniorCapacity > 0 ? Math.round((stats.juniorOccupied / stats.juniorCapacity) * 100) : 0;

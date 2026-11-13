@@ -14,7 +14,16 @@ export class AppError extends Error {
   }
 }
 
-export const sendSuccess = <T>(res: Response, data: T, message?: string, statusCode = 200) => {
+export const sendSuccess = <T>(
+  res: Response,
+  data: T,
+  message?: string,
+  statusCode = 200,
+  cacheSeconds = 0
+) => {
+  if (cacheSeconds > 0) {
+    res.setHeader('Cache-Control', `private, max-age=${cacheSeconds}, stale-while-revalidate=${cacheSeconds * 2}`);
+  }
   return res.status(statusCode).json({
     success: true,
     message,
