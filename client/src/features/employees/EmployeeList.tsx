@@ -122,23 +122,23 @@ export const EmployeeList: React.FC = () => {
           <div className="p-8 text-center text-[#64748b] text-[13px]">No employees found.</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-[14px]">
+            <table className="w-full table-fixed text-left border-collapse text-[14px]">
               <thead>
                 <tr className="bg-slate-50/80 border-b border-[#e5e9f0] text-[#64748b] font-medium uppercase tracking-[0.04em] text-[11px]">
-                  <th className="py-3.5 px-5 w-36 whitespace-nowrap">Employee ID</th>
-                  <th className="py-3.5 px-5 min-w-[160px]">Staff Name</th>
-                  <th className="py-3.5 px-5 w-32 whitespace-nowrap">Category</th>
-                  <th className="py-3.5 px-5 w-36 whitespace-nowrap">Allotment Status</th>
+                  <th className="py-3.5 px-6 w-[22%] whitespace-nowrap">Employee ID</th>
+                  <th className="py-3.5 px-6 w-[34%]">Staff Name</th>
+                  <th className="py-3.5 px-6 w-[22%] whitespace-nowrap">Category</th>
+                  <th className="py-3.5 px-6 w-[22%] whitespace-nowrap">Allotment Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#e5e9f0]">
                 {employees.map((emp) => (
                   <tr key={emp._id} className="hover:bg-slate-50/70 transition">
-                    <td className="py-3.5 px-5 font-mono font-medium text-slate-800 whitespace-nowrap">
+                    <td className="py-3.5 px-6 font-mono font-medium text-slate-800 whitespace-nowrap">
                       {emp.employeeId}
                     </td>
-                    <td className="py-3.5 px-5 font-medium text-slate-900 capitalize">{emp.name}</td>
-                    <td className="py-3.5 px-5 whitespace-nowrap">
+                    <td className="py-3.5 px-6 font-medium text-slate-900 capitalize truncate">{emp.name}</td>
+                    <td className="py-3.5 px-6 whitespace-nowrap">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[12px] font-medium ${
                           emp.category === 'JUNIOR'
@@ -151,7 +151,7 @@ export const EmployeeList: React.FC = () => {
                         {emp.category}
                       </span>
                     </td>
-                    <td className="py-3.5 px-5 whitespace-nowrap">
+                    <td className="py-3.5 px-6 whitespace-nowrap">
                       {emp.hasActiveAllotment ? (
                         <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                           <span className="w-1.5 h-1.5 rounded-full bg-[#00a651]"></span>

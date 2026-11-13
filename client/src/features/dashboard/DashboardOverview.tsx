@@ -236,9 +236,6 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
                   / {stats.juniorCapacity} beds
                 </span>
               </div>
-              <span className="text-[13px] font-normal text-[#64748b] block mt-1">
-                {stats.juniorCapacity - stats.juniorOccupied} available slots
-              </span>
             </div>
 
             <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
@@ -266,9 +263,6 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
                   / {stats.seniorCapacity} portions
                 </span>
               </div>
-              <span className="text-[13px] font-normal text-[#64748b] block mt-1">
-                {stats.seniorCapacity - stats.seniorOccupied} available portions
-              </span>
             </div>
 
             <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
@@ -296,9 +290,6 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
                   / {stats.vipCapacity} villas
                 </span>
               </div>
-              <span className="text-[13px] font-normal text-[#64748b] block mt-1">
-                {stats.vipCapacity - stats.vipOccupied} available villas
-              </span>
             </div>
 
             <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
