@@ -59,10 +59,10 @@ const MainLayout: React.FC = () => {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
         {currentTab === 'dashboard' && <Header />}
 
-        <main className={`flex-1 px-4 sm:px-6 pb-6 ${currentTab === 'dashboard' ? 'pt-2' : 'pt-4 sm:pt-6'}`}>
+        <main className={`flex-1 overflow-y-auto px-4 sm:px-5 pb-6 ${currentTab === 'dashboard' ? 'pt-2' : 'pt-4 sm:pt-5'}`}>
           {currentTab === 'dashboard' && <DashboardOverview onNavigate={setCurrentTab} />}
           {currentTab === 'employees' && <EmployeeList />}
           {currentTab === 'allotments' && <AllotmentList />}
