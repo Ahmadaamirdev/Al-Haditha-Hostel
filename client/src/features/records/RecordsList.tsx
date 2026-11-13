@@ -32,6 +32,14 @@ export const RecordsList: React.FC = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
+  // Live polling: update records periodically in background
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchRecords();
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [search]);
+
   const filteredRecords = records.filter((item) => {
     if (filterCategory === 'ALL') return true;
     return item.employeeId?.category === filterCategory;

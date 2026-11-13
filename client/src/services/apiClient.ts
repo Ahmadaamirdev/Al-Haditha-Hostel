@@ -23,14 +23,16 @@ const apiCache = new Map<string, CacheEntry>();
 
 /**
  * Configure default cache TTLs (in milliseconds) per endpoint prefix.
+ * Keep TTLs short so data is snappy when navigating while staying live.
+ * Allotments, records, stats, and notifications are kept real-time or ultra-short.
  */
 const CACHE_TTL_MAP: Record<string, number> = {
-  '/bootcamps': 5 * 60 * 1000, // 5 minutes
-  '/employees': 2 * 60 * 1000, // 2 minutes
-  '/stats': 30 * 1000, // 30 seconds
-  '/allotments': 15 * 1000, // 15 seconds
-  '/allotments/records': 30 * 1000, // 30 seconds
-  '/notifications': 20 * 1000, // 20 seconds
+  '/bootcamps': 60 * 1000, // 1 minute
+  '/employees': 30 * 1000, // 30 seconds
+  '/stats': 5 * 1000, // 5 seconds
+  '/allotments': 5 * 1000, // 5 seconds
+  '/allotments/records': 10 * 1000, // 10 seconds
+  '/notifications': 5 * 1000, // 5 seconds
 };
 
 /**
@@ -128,5 +130,6 @@ export async function apiRequest<T>(
 
   return responseData;
 }
+
 
 

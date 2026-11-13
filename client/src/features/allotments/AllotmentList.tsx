@@ -64,6 +64,14 @@ export const AllotmentList: React.FC = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
+  // Live polling: update active stays every 15s in background
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchActiveAllotments();
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [search]);
+
   const openNewAllotmentModal = async () => {
     try {
       setActionError(null);

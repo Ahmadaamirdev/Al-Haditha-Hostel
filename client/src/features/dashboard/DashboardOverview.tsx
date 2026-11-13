@@ -85,6 +85,11 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
 
   useEffect(() => {
     loadDashboardData();
+    // Auto-refresh dashboard every 10 seconds silently to stay completely live
+    const interval = setInterval(() => {
+      loadDashboardData({ skipCache: true });
+    }, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleManualRefresh = () => {

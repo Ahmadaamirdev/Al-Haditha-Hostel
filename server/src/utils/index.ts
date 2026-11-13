@@ -22,7 +22,9 @@ export const sendSuccess = <T>(
   cacheSeconds = 0
 ) => {
   if (cacheSeconds > 0) {
-    res.setHeader('Cache-Control', `private, max-age=${cacheSeconds}, stale-while-revalidate=${cacheSeconds * 2}`);
+    res.setHeader('Cache-Control', `private, no-cache, max-age=${cacheSeconds}, must-revalidate`);
+  } else {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   }
   return res.status(statusCode).json({
     success: true,
