@@ -45,14 +45,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Sidebar Container */}
       <aside
         className={`
-          fixed inset-y-0 left-0 z-50 w-56 bg-[#0a192f] text-slate-300 flex flex-col justify-between shrink-0 min-h-screen border-r border-slate-800/80 transition-transform duration-200 ease-in-out
-          md:static md:translate-x-0
+          fixed inset-y-0 left-0 z-50 w-56 bg-[#0a192f] text-slate-300 flex flex-col justify-between shrink-0 h-screen border-r border-slate-800/80 transition-transform duration-200 ease-in-out
+          md:sticky md:top-0 md:h-screen md:translate-x-0
           ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         `}
       >
-        <div>
+        <div className="flex-1 flex flex-col min-h-0">
           {/* Brand Logo Container + Mobile Close Button */}
-          <div className="p-4 flex items-center justify-between">
+          <div className="p-4 flex items-center justify-between shrink-0">
             <div className="bg-white rounded-[12px] p-3 flex items-center justify-center border border-[#e5e9f0] flex-1">
               <img
                 src={logoImg}
@@ -71,7 +71,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           {/* Navigation Menu */}
-          <nav className="px-3 space-y-1 mt-1">
+          <nav className="px-3 space-y-1 mt-1 overflow-y-auto">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = currentTab === item.id;
@@ -97,7 +97,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* Logout button */}
-        <div className="p-3 border-t border-slate-800/80">
+        <div className="p-3 border-t border-slate-800/80 shrink-0">
           <button
             onClick={logout}
             className="w-full h-10 flex items-center gap-2.5 px-3.5 text-[14px] font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-950/20 rounded-[10px] transition duration-150"

@@ -28,7 +28,7 @@ const MainLayout: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f3f6f9] flex flex-col md:flex-row">
+    <div className="h-screen bg-[#f3f6f9] flex flex-col md:flex-row overflow-hidden">
       {/* Mobile Top App Bar */}
       <div className="md:hidden flex items-center justify-between px-4 py-3 bg-[#0a192f] border-b border-slate-800 text-white shrink-0">
         <div className="flex items-center gap-3">
@@ -57,7 +57,7 @@ const MainLayout: React.FC = () => {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto">
         {currentTab === 'dashboard' && <Header />}
 
         <main className={`flex-1 px-4 sm:px-6 pb-6 ${currentTab === 'dashboard' ? 'pt-2' : 'pt-4 sm:pt-6'}`}>
