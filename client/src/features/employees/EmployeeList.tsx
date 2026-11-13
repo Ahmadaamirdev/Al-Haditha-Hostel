@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { apiRequest } from '../../services/apiClient';
-import { UserPlus, Filter, Users } from 'lucide-react';
+import { UserPlus, Users } from 'lucide-react';
 import { Employee, EmployeeCategory } from '../../types';
 
 export const EmployeeList: React.FC = () => {
@@ -86,21 +86,21 @@ export const EmployeeList: React.FC = () => {
 
       {/* Filter and Search Bar */}
       <div className="bg-white p-4 rounded-[12px] border border-[#e5e9f0] hover:border-emerald-400/80 hover:shadow-[0_2px_12px_rgba(0,166,81,0.08)] transition duration-200 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <Filter className="w-4 h-4 text-slate-400" />
-          <span className="text-[11px] font-medium uppercase tracking-[0.04em] text-[#64748b]">
-            Category:
-          </span>
-          <select
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            className="text-[13px] bg-slate-50 border border-[#e5e9f0] rounded-[8px] px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#00a651] font-medium text-slate-700"
-          >
-            <option value="">All Staff</option>
-            <option value="VIP">VIP</option>
-            <option value="SENIOR">Senior</option>
-            <option value="JUNIOR">Junior</option>
-          </select>
+        <div className="flex items-center gap-2 flex-wrap">
+          {(['', 'VIP', 'SENIOR', 'JUNIOR'] as const).map((cat) => (
+            <button
+              key={cat}
+              type="button"
+              onClick={() => setCategoryFilter(cat)}
+              className={`px-3 py-1.5 rounded-[8px] text-[13px] font-medium transition ${
+                categoryFilter === cat
+                  ? 'bg-[#00a651] text-white font-medium'
+                  : 'bg-white text-slate-600 hover:bg-slate-100 border border-[#e5e9f0]'
+              }`}
+            >
+              {cat === '' ? 'All Categories' : `${cat} Only`}
+            </button>
+          ))}
         </div>
 
         <div className="w-full sm:w-72">
@@ -140,7 +140,7 @@ export const EmployeeList: React.FC = () => {
                     <td className="py-3.5 px-6 font-medium text-slate-900 capitalize truncate">{emp.name}</td>
                     <td className="py-3.5 px-6 whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[12px] font-medium ${
+                        className={`inline-flex items-center justify-center w-[72px] py-0.5 rounded-full text-[12px] font-medium ${
                           emp.category === 'JUNIOR'
                             ? 'bg-[#ecfdf5] text-[#00a651]'
                             : emp.category === 'SENIOR'

@@ -290,7 +290,7 @@ export const AllotmentList: React.FC = () => {
                     </td>
                     <td className="py-3 px-3 whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-md text-[12px] font-medium ${
+                        className={`inline-flex items-center justify-center w-[72px] py-0.5 rounded-full text-[12px] font-medium ${
                           item.employeeId?.category === 'JUNIOR'
                             ? 'bg-[#ecfdf5] text-[#00a651]'
                             : item.employeeId?.category === 'SENIOR'
