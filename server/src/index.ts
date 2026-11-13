@@ -23,9 +23,14 @@ app.use(
 app.use(express.json());
 
 // Serverless DB connection middleware
+let isSeeded = false;
 app.use(async (_req: Request, _res: Response, next: NextFunction) => {
   try {
     await connectDB();
+    if (!isSeeded) {
+      await AuthService.seedInitialAdmin();
+      isSeeded = true;
+    }
     next();
   } catch (err) {
     next(err);

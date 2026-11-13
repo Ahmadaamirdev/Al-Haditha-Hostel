@@ -5,6 +5,7 @@ import {
   Users,
   Building2,
   CalendarCheck2,
+  FileText,
   LogOut,
   X,
 } from 'lucide-react';
@@ -29,6 +30,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'employees', label: 'Employees', icon: Users },
     { id: 'allotments', label: 'Allotments', icon: CalendarCheck2 },
+    { id: 'records', label: 'Records', icon: FileText },
     { id: 'bootcamps', label: 'Bootcamps', icon: Building2 },
   ];
 

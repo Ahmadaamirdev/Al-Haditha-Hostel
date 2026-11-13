@@ -9,6 +9,8 @@ import { BootcampList } from './features/bootcamps/BootcampList';
 import { EmployeeList } from './features/employees/EmployeeList';
 import { Menu } from 'lucide-react';
 import logoImg from './assets/logo.png';
+import { NotificationPanel } from './features/notifications/NotificationPanel';
+import { RecordsList } from './features/records/RecordsList';
 
 const MainLayout: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -62,9 +64,11 @@ const MainLayout: React.FC = () => {
 
         <main className={`flex-1 px-4 sm:px-6 pb-6 ${currentTab === 'dashboard' ? 'pt-2' : 'pt-4 sm:pt-6'}`}>
           {currentTab === 'dashboard' && <DashboardOverview onNavigate={setCurrentTab} />}
-          {currentTab === 'allotments' && <AllotmentList />}
-          {currentTab === 'bootcamps' && <BootcampList />}
           {currentTab === 'employees' && <EmployeeList />}
+          {currentTab === 'allotments' && <AllotmentList />}
+          {currentTab === 'records' && <RecordsList />}
+          {currentTab === 'bootcamps' && <BootcampList />}
+          {currentTab === 'notifications' && <NotificationPanel />}
         </main>
       </div>
     </div>

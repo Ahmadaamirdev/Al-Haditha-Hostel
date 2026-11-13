@@ -166,6 +166,18 @@ export const getActiveAllotments = async (req: Request, res: Response, next: Nex
   }
 };
 
+export const getRecords = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { search } = req.query;
+    const records = await AllotmentService.getRecords({
+      search: search as string,
+    });
+    sendSuccess(res, records);
+  } catch (err) {
+    next(err);
+  }
+};
+
 // =================== NOTIFICATION CONTROLLER ===================
 export const getNotifications = async (_req: Request, res: Response, next: NextFunction) => {
   try {

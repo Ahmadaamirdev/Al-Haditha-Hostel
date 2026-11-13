@@ -25,6 +25,7 @@ router.get('/bootcamps/units/suggest', controllers.suggestUnit);
 // =================== ALLOTMENT ROUTES ===================
 router.post('/allotments', validate(validations.createAllotmentSchema), controllers.createAllotment);
 router.get('/allotments', controllers.getActiveAllotments);
+router.get('/allotments/records', controllers.getRecords);
 router.patch('/allotments/:id/check-in', validate(validations.checkInSchema), controllers.confirmCheckIn);
 router.patch('/allotments/:id/check-out', validate(validations.checkOutSchema), controllers.confirmCheckOut);
 router.patch('/allotments/:id/duration', validate(validations.updateDurationSchema), controllers.updateDuration);

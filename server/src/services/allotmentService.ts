@@ -357,4 +357,40 @@ export class AllotmentService {
 
     return allotments;
   }
+
+  /**
+   * Fetch complete stay history records (completed and all historical allotments).
+   */
+  public static async getRecords(filters: { search?: string }): Promise<any[]> {
+    const allotments = await Allotment.find({})
+      .populate('employeeId', 'employeeId name category contactNumber department')
+      .populate('bootcampId', 'bootcampCode name category locationBlock')
+      .populate('allocationUnitId', 'unitCode unitType portionIdentifier bedIdentifier')
+      .populate('createdById', 'fullName username')
+      .populate('checkOutConfirmedById', 'fullName username')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    if (filters.search) {
+      const s = filters.search.toLowerCase();
+      return allotments.filter((item: any) => {
+        const empName = item.employeeId?.name?.toLowerCase() || '';
+        const empId = item.employeeId?.employeeId?.toLowerCase() || '';
+        const bcCode = item.bootcampId?.bootcampCode?.toLowerCase() || '';
+        const bcName = item.bootcampId?.name?.toLowerCase() || '';
+        const uCode = item.allocationUnitId?.unitCode?.toLowerCase() || '';
+        const status = item.status?.toLowerCase() || '';
+        return (
+          empName.includes(s) ||
+          empId.includes(s) ||
+          bcCode.includes(s) ||
+          bcName.includes(s) ||
+          uCode.includes(s) ||
+          status.includes(s)
+        );
+      });
+    }
+
+    return allotments;
+  }
 }
