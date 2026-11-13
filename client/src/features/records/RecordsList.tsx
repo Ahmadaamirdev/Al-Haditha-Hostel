@@ -126,7 +126,7 @@ export const RecordsList: React.FC = () => {
                         {item.employeeId?.department || 'Staff'}
                       </span>
                     </td>
-                    <td className="py-2.5 px-2 sm:px-3 font-mono font-medium text-slate-800 whitespace-nowrap text-[11px] sm:text-[12px]">
+                    <td className="py-2.5 px-2 sm:px-3 font-medium text-slate-800 whitespace-nowrap text-[11px] sm:text-[12px]">
                       {item.employeeId?.employeeId || '—'}
                     </td>
                     <td className="py-2.5 px-1.5 sm:px-2 whitespace-nowrap">
@@ -143,17 +143,17 @@ export const RecordsList: React.FC = () => {
                       </span>
                     </td>
                     <td className="py-2.5 px-2 sm:px-3 whitespace-nowrap">
-                      <div className="font-mono font-medium text-slate-800 truncate max-w-[120px] sm:max-w-[160px]" title={item.allocationUnitId?.unitCode}>
+                      <div className="font-medium text-slate-800 truncate max-w-[120px] sm:max-w-[160px]" title={item.allocationUnitId?.unitCode}>
                         {item.allocationUnitId?.unitCode || '—'}
                       </div>
-                      <div className="text-[10px] text-slate-400 font-sans font-normal truncate max-w-[120px] sm:max-w-[160px]">
+                      <div className="text-[10px] text-slate-400 font-normal truncate max-w-[120px] sm:max-w-[160px]">
                         {item.bootcampId?.name}
                       </div>
                     </td>
-                    <td className="py-2.5 px-2 sm:px-3 font-mono text-slate-700 whitespace-nowrap text-[11px] sm:text-[12px]">
+                    <td className="py-2.5 px-2 sm:px-3 text-slate-700 whitespace-nowrap text-[11px] sm:text-[12px]">
                       {formatDate(item.actualCheckInDate || item.checkInDate || item.expectedCheckInDate || item.createdAt)}
                     </td>
-                    <td className="py-2.5 px-2 sm:px-3 font-mono text-slate-700 whitespace-nowrap text-[11px] sm:text-[12px]">
+                    <td className="py-2.5 px-2 sm:px-3 text-slate-700 whitespace-nowrap text-[11px] sm:text-[12px]">
                       {item.actualCheckoutDate
                         ? formatDate(item.actualCheckoutDate)
                         : item.checkoutDate || item.expectedCheckoutDate
