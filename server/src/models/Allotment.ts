@@ -123,6 +123,8 @@ allotmentSchema.index(
 
 // Notification Query Index
 allotmentSchema.index({ status: 1, expectedCheckoutDate: 1 });
+allotmentSchema.index({ status: 1, checkoutDate: 1 });
+allotmentSchema.index({ employeeId: 1, status: 1 });
 
 export const Allotment = mongoose.model<IAllotment>('Allotment', allotmentSchema);
 

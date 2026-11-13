@@ -6,18 +6,22 @@ export class NotificationService {
     summary: { upcomingCount: number; dueTodayCount: number; overdueCount: number };
     alerts: any[];
   }> {
-    // Only checked-in active allotments participate in checkout notifications
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const sevenDaysLater = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7, 23, 59, 59, 999);
+
+    // Only fetch allotments that are overdue or due within 7 days — not all checked-in stays
     const activeAllotments = await Allotment.find({
       status: AllotmentStatus.CHECKED_IN,
+      $or: [
+        { checkoutDate: { $lte: sevenDaysLater } },
+        { expectedCheckoutDate: { $lte: sevenDaysLater } },
+      ],
     })
       .populate('employeeId', 'name employeeId category contactNumber')
       .populate('bootcampId', 'bootcampCode name')
       .populate('allocationUnitId', 'unitCode unitType portionIdentifier bedIdentifier')
       .lean();
-
-    const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
 
     const alerts: any[] = [];
     let upcomingCount = 0;

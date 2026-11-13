@@ -12,7 +12,7 @@ import {
   ArrowRight,
   CheckCircle2,
 } from 'lucide-react';
-import { EmployeeCategory, NotificationItem, NotificationType } from '../../types';
+import { NotificationItem, NotificationType } from '../../types';
 import { formatDate, formatUnitCode } from '../../utils';
 
 interface DashboardOverviewProps {
@@ -48,53 +48,30 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
 
   const loadDashboardData = async () => {
     try {
-      const [employees, bootcamps, allotments, notifications] = await Promise.all([
-        apiRequest<any[]>('/employees'),
-        apiRequest<any[]>('/bootcamps'),
-        apiRequest<any[]>('/allotments'),
+      const [statsData, notifications] = await Promise.all([
+        apiRequest<any>('/stats'),
         apiRequest<{
           summary: { upcomingCount: number; dueTodayCount: number; overdueCount: number };
           alerts: NotificationItem[];
         }>('/notifications'),
       ]);
 
-      let totalCap = 0;
-      let occupied = 0;
-      let jrCap = 0, jrOcc = 0;
-      let srCap = 0, srOcc = 0;
-      let vipCap = 0, vipOcc = 0;
-
-      bootcamps.forEach((b) => {
-        totalCap += b.totalCapacity;
-        occupied += b.occupiedCount;
-        if (b.category === EmployeeCategory.JUNIOR) {
-          jrCap += b.totalCapacity;
-          jrOcc += b.occupiedCount;
-        } else if (b.category === EmployeeCategory.SENIOR) {
-          srCap += b.totalCapacity;
-          srOcc += b.occupiedCount;
-        } else if (b.category === EmployeeCategory.VIP) {
-          vipCap += b.totalCapacity;
-          vipOcc += b.occupiedCount;
-        }
-      });
-
       setStats({
-        totalEmployees: employees.length,
-        vipCount: employees.filter((e) => e.category === EmployeeCategory.VIP).length,
-        seniorCount: employees.filter((e) => e.category === EmployeeCategory.SENIOR).length,
-        juniorCount: employees.filter((e) => e.category === EmployeeCategory.JUNIOR).length,
-        seniorOccupied: srOcc,
-        seniorCapacity: srCap,
-        juniorOccupied: jrOcc,
-        juniorCapacity: jrCap,
-        vipOccupied: vipOcc,
-        vipCapacity: vipCap,
-        totalBootcamps: bootcamps.length,
-        totalCapacity: totalCap,
-        occupiedUnits: occupied,
-        availableUnits: totalCap - occupied,
-        activeStays: allotments.length,
+        totalEmployees: statsData.employees.total,
+        vipCount: statsData.employees.VIP,
+        seniorCount: statsData.employees.SENIOR,
+        juniorCount: statsData.employees.JUNIOR,
+        seniorOccupied: statsData.bootcamps.byCategory?.SENIOR?.occupied || 0,
+        seniorCapacity: statsData.bootcamps.byCategory?.SENIOR?.capacity || 0,
+        juniorOccupied: statsData.bootcamps.byCategory?.JUNIOR?.occupied || 0,
+        juniorCapacity: statsData.bootcamps.byCategory?.JUNIOR?.capacity || 0,
+        vipOccupied: statsData.bootcamps.byCategory?.VIP?.occupied || 0,
+        vipCapacity: statsData.bootcamps.byCategory?.VIP?.capacity || 0,
+        totalBootcamps: statsData.bootcamps.total,
+        totalCapacity: statsData.bootcamps.totalCapacity,
+        occupiedUnits: statsData.bootcamps.occupiedUnits,
+        availableUnits: statsData.bootcamps.availableUnits,
+        activeStays: statsData.activeStays,
       });
 
       setNotificationData(notifications);

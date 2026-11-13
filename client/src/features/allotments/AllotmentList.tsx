@@ -58,7 +58,10 @@ export const AllotmentList: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchActiveAllotments();
+    const timer = setTimeout(() => {
+      fetchActiveAllotments();
+    }, 300);
+    return () => clearTimeout(timer);
   }, [search]);
 
   const openNewAllotmentModal = async () => {

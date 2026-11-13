@@ -33,7 +33,10 @@ export const EmployeeList: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchEmployees();
+    const timer = setTimeout(() => {
+      fetchEmployees();
+    }, 300);
+    return () => clearTimeout(timer);
   }, [categoryFilter, search]);
 
   const handleCreateEmployee = async (e: React.FormEvent) => {

@@ -26,7 +26,10 @@ export const RecordsList: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchRecords();
+    const timer = setTimeout(() => {
+      fetchRecords();
+    }, 300);
+    return () => clearTimeout(timer);
   }, [search]);
 
   const filteredRecords = records.filter((item) => {

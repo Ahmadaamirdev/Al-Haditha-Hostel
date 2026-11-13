@@ -12,10 +12,11 @@ export const connectDB = async (): Promise<void> => {
   const connectWithOptions = async () => {
     return await mongoose.connect(config.mongodbUri, {
       maxPoolSize: 10, // Optimal pool size for serverless lambdas to avoid exhaustion
-      minPoolSize: 2,
+      minPoolSize: 0,
       maxIdleTimeMS: 30000,
       serverSelectionTimeoutMS: 8000,
       socketTimeoutMS: 45000,
+      connectTimeoutMS: 10000,
     });
   };
 

@@ -330,67 +330,148 @@ export class AllotmentService {
     status?: AllotmentStatus;
     search?: string;
   }): Promise<any[]> {
-    const query: any = {
-      status: filters.status
-        ? filters.status
-        : { $in: [AllotmentStatus.PENDING, AllotmentStatus.CHECKED_IN] },
-    };
+    const statusFilter = filters.status
+      ? filters.status
+      : { $in: [AllotmentStatus.PENDING, AllotmentStatus.CHECKED_IN] };
 
-    const allotments = await Allotment.find(query)
-      .populate('employeeId', 'employeeId name category contactNumber department')
-      .populate('bootcampId', 'bootcampCode name category')
-      .populate('allocationUnitId', 'unitCode unitType portionIdentifier bedIdentifier')
-      .populate('createdById', 'fullName username')
-      .sort({ expectedCheckoutDate: 1 })
-      .lean();
+    const pipeline: any[] = [
+      { $match: { status: statusFilter } },
+      {
+        $lookup: {
+          from: 'employees',
+          localField: 'employeeId',
+          foreignField: '_id',
+          as: 'employeeId',
+          pipeline: [{ $project: { employeeId: 1, name: 1, category: 1, contactNumber: 1, department: 1 } }],
+        },
+      },
+      { $unwind: { path: '$employeeId', preserveNullAndEmptyArrays: false } },
+      {
+        $lookup: {
+          from: 'bootcamps',
+          localField: 'bootcampId',
+          foreignField: '_id',
+          as: 'bootcampId',
+          pipeline: [{ $project: { bootcampCode: 1, name: 1, category: 1 } }],
+        },
+      },
+      { $unwind: { path: '$bootcampId', preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: 'allocationunits',
+          localField: 'allocationUnitId',
+          foreignField: '_id',
+          as: 'allocationUnitId',
+          pipeline: [{ $project: { unitCode: 1, unitType: 1, portionIdentifier: 1, bedIdentifier: 1 } }],
+        },
+      },
+      { $unwind: { path: '$allocationUnitId', preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'createdById',
+          foreignField: '_id',
+          as: 'createdById',
+          pipeline: [{ $project: { fullName: 1, username: 1 } }],
+        },
+      },
+      { $unwind: { path: '$createdById', preserveNullAndEmptyArrays: true } },
+    ];
 
     if (filters.search) {
-      const s = filters.search.toLowerCase();
-      return allotments.filter((item: any) => {
-        const empName = item.employeeId?.name?.toLowerCase() || '';
-        const empId = item.employeeId?.employeeId?.toLowerCase() || '';
-        const bcCode = item.bootcampId?.bootcampCode?.toLowerCase() || '';
-        const uCode = item.allocationUnitId?.unitCode?.toLowerCase() || '';
-        return empName.includes(s) || empId.includes(s) || bcCode.includes(s) || uCode.includes(s);
+      const regex = new RegExp(filters.search, 'i');
+      pipeline.push({
+        $match: {
+          $or: [
+            { 'employeeId.name': regex },
+            { 'employeeId.employeeId': regex },
+            { 'bootcampId.bootcampCode': regex },
+            { 'allocationUnitId.unitCode': regex },
+          ],
+        },
       });
     }
 
-    return allotments;
+    pipeline.push({ $sort: { expectedCheckoutDate: 1 } });
+
+    return Allotment.aggregate(pipeline);
   }
 
   /**
    * Fetch complete stay history records (completed and all historical allotments).
    */
   public static async getRecords(filters: { search?: string }): Promise<any[]> {
-    const allotments = await Allotment.find({})
-      .populate('employeeId', 'employeeId name category contactNumber department')
-      .populate('bootcampId', 'bootcampCode name category locationBlock')
-      .populate('allocationUnitId', 'unitCode unitType portionIdentifier bedIdentifier')
-      .populate('createdById', 'fullName username')
-      .populate('checkOutConfirmedById', 'fullName username')
-      .sort({ createdAt: -1 })
-      .lean();
+    const pipeline: any[] = [
+      {
+        $lookup: {
+          from: 'employees',
+          localField: 'employeeId',
+          foreignField: '_id',
+          as: 'employeeId',
+          pipeline: [{ $project: { employeeId: 1, name: 1, category: 1, contactNumber: 1, department: 1 } }],
+        },
+      },
+      { $unwind: { path: '$employeeId', preserveNullAndEmptyArrays: false } },
+      {
+        $lookup: {
+          from: 'bootcamps',
+          localField: 'bootcampId',
+          foreignField: '_id',
+          as: 'bootcampId',
+          pipeline: [{ $project: { bootcampCode: 1, name: 1, category: 1, locationBlock: 1 } }],
+        },
+      },
+      { $unwind: { path: '$bootcampId', preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: 'allocationunits',
+          localField: 'allocationUnitId',
+          foreignField: '_id',
+          as: 'allocationUnitId',
+          pipeline: [{ $project: { unitCode: 1, unitType: 1, portionIdentifier: 1, bedIdentifier: 1 } }],
+        },
+      },
+      { $unwind: { path: '$allocationUnitId', preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'createdById',
+          foreignField: '_id',
+          as: 'createdById',
+          pipeline: [{ $project: { fullName: 1, username: 1 } }],
+        },
+      },
+      { $unwind: { path: '$createdById', preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'checkOutConfirmedById',
+          foreignField: '_id',
+          as: 'checkOutConfirmedById',
+          pipeline: [{ $project: { fullName: 1, username: 1 } }],
+        },
+      },
+      { $unwind: { path: '$checkOutConfirmedById', preserveNullAndEmptyArrays: true } },
+    ];
 
     if (filters.search) {
-      const s = filters.search.toLowerCase();
-      return allotments.filter((item: any) => {
-        const empName = item.employeeId?.name?.toLowerCase() || '';
-        const empId = item.employeeId?.employeeId?.toLowerCase() || '';
-        const bcCode = item.bootcampId?.bootcampCode?.toLowerCase() || '';
-        const bcName = item.bootcampId?.name?.toLowerCase() || '';
-        const uCode = item.allocationUnitId?.unitCode?.toLowerCase() || '';
-        const status = item.status?.toLowerCase() || '';
-        return (
-          empName.includes(s) ||
-          empId.includes(s) ||
-          bcCode.includes(s) ||
-          bcName.includes(s) ||
-          uCode.includes(s) ||
-          status.includes(s)
-        );
+      const regex = new RegExp(filters.search, 'i');
+      pipeline.push({
+        $match: {
+          $or: [
+            { 'employeeId.name': regex },
+            { 'employeeId.employeeId': regex },
+            { 'bootcampId.bootcampCode': regex },
+            { 'bootcampId.name': regex },
+            { 'allocationUnitId.unitCode': regex },
+            { status: regex },
+          ],
+        },
       });
     }
 
-    return allotments;
+    pipeline.push({ $sort: { createdAt: -1 } });
+
+    return Allotment.aggregate(pipeline);
   }
 }

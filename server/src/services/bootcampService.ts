@@ -154,18 +154,21 @@ export class BootcampService {
   }
 
   public static async suggestUnitForEmployee(category: EmployeeCategory): Promise<any> {
-    const units = await AllocationUnit.find({ category, isOccupied: false })
-      .populate('bootcampId', 'bootcampCode name')
-      .lean();
+    const [unit, totalAvailableInCategory] = await Promise.all([
+      AllocationUnit.findOne({ category, isOccupied: false })
+        .populate('bootcampId', 'bootcampCode name')
+        .lean(),
+      AllocationUnit.countDocuments({ category, isOccupied: false }),
+    ]);
 
-    if (!units || units.length === 0) {
+    if (!unit) {
       throw new AppError(`No available units found for category ${category}`, 404, 'NOT_FOUND');
     }
 
     return {
-      suggestedUnit: units[0],
-      totalAvailableInCategory: units.length,
-      reason: `System suggested optimal available slot in ${(units[0].bootcampId as any)?.name || 'Bootcamp'}`,
+      suggestedUnit: unit,
+      totalAvailableInCategory,
+      reason: `System suggested optimal available slot in ${(unit.bootcampId as any)?.name || 'Bootcamp'}`,
     };
   }
 }
