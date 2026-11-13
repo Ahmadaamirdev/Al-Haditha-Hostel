@@ -27,3 +27,10 @@ export function formatDateTime(dateString?: string | null): string {
   });
 }
 
+export function formatUnitCode(unitCode?: string | null): string {
+  if (!unitCode) return '';
+  return unitCode
+    .replace(/-WHOLE$/i, '')
+    .replace(/-Portion([A-Z])/gi, '-P$1')
+    .replace(/-Portion\s*([A-Z])/gi, '-P$1');
+}

@@ -14,7 +14,7 @@ function buildUnitPayloads(code: string, category: EmployeeCategory): { payload:
   if (category === EmployeeCategory.VIP) {
     totalCapacity = 1;
     unitPayloads.push({
-      unitCode: `${code}-WHOLE`,
+      unitCode: code,
       category: EmployeeCategory.VIP,
       unitType: AllocationUnitType.WHOLE,
       portionIdentifier: null,
@@ -24,9 +24,9 @@ function buildUnitPayloads(code: string, category: EmployeeCategory): { payload:
   } else if (category === EmployeeCategory.SENIOR) {
     totalCapacity = 2;
     ['Portion A', 'Portion B'].forEach((portion) => {
-      const portionCode = portion.replace(' ', '');
+      const pCode = portion === 'Portion A' ? 'PA' : 'PB';
       unitPayloads.push({
-        unitCode: `${code}-${portionCode}`,
+        unitCode: `${code}-${pCode}`,
         category: EmployeeCategory.SENIOR,
         unitType: AllocationUnitType.PORTION,
         portionIdentifier: portion,

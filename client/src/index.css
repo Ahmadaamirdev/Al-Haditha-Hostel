@@ -2,3 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    font-family: "Inter Variable", Inter, system-ui, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+}

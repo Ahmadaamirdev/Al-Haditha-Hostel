@@ -26,23 +26,23 @@ export const LoginForm: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0a192f] px-4">
-      <div className="max-w-md w-full bg-[#112240] border border-slate-700/80 rounded-2xl shadow-2xl p-8">
+      <div className="max-w-md w-full bg-[#112240] border border-slate-700/80 rounded-[12px] shadow-2xl p-8">
         <div className="text-center mb-8">
-          <div className="inline-block bg-white rounded-2xl p-4 shadow-lg mb-4">
+          <div className="inline-block bg-white rounded-[12px] p-4 shadow-lg mb-4">
             <img
               src={logoImg}
               alt="Al Haditha Energy"
               className="h-12 w-auto object-contain mx-auto"
             />
           </div>
-          <h2 className="text-xl font-bold text-white tracking-tight">Hostel Allotment Management</h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <h2 className="text-[22px] font-semibold text-white leading-[1.25]">Hostel Allotment Management</h2>
+          <p className="text-[13px] text-slate-400 mt-1">
             Al Haditha Energy &bull; Secure Administrator Portal
           </p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-rose-950/40 border border-rose-800 text-rose-300 text-xs flex items-start gap-3">
+          <div className="mb-6 p-4 rounded-[10px] bg-rose-950/40 border border-rose-800 text-rose-300 text-[13px] flex items-start gap-3">
             <ShieldAlert className="w-4 h-4 shrink-0 text-rose-400 mt-0.5" />
             <span>{error}</span>
           </div>
@@ -50,7 +50,7 @@ export const LoginForm: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+            <label className="block text-[12px] font-medium text-slate-300 mb-1.5">
               Username / Email
             </label>
             <input
@@ -58,13 +58,13 @@ export const LoginForm: React.FC = () => {
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#0a192f] border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#00a651] focus:border-transparent text-sm"
+              className="w-full px-3.5 py-2.5 rounded-[10px] bg-[#0a192f] border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#00a651] focus:border-transparent text-[14px]"
               placeholder="admin@alhaditha.com"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+            <label className="block text-[12px] font-medium text-slate-300 mb-1.5">
               Password
             </label>
             <input
@@ -72,7 +72,7 @@ export const LoginForm: React.FC = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#0a192f] border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#00a651] focus:border-transparent text-sm"
+              className="w-full px-3.5 py-2.5 rounded-[10px] bg-[#0a192f] border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#00a651] focus:border-transparent text-[14px]"
               placeholder="••••••••"
             />
           </div>
@@ -80,7 +80,7 @@ export const LoginForm: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 bg-[#00a651] hover:bg-[#008c44] disabled:opacity-50 text-white font-semibold rounded-xl shadow-lg shadow-[#00a651]/20 transition duration-150 flex items-center justify-center gap-2 text-sm mt-3"
+            className="w-full py-2.5 px-4 bg-[#00a651] hover:bg-[#008c44] disabled:opacity-50 text-white font-medium rounded-[10px] transition duration-150 flex items-center justify-center gap-2 text-[14px] mt-3"
           >
             {loading ? 'Authenticating...' : 'Sign In to Portal'}
           </button>
