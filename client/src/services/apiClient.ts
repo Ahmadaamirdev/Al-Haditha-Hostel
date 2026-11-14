@@ -88,6 +88,12 @@ export async function apiRequest<T>(
   const resJson = await response.json().catch(() => null);
 
   if (!response.ok) {
+    if (response.status === 401) {
+      localStorage.removeItem('alhaditha_token');
+      localStorage.removeItem('alhaditha_user');
+      clearApiCache();
+      window.dispatchEvent(new Event('auth:unauthorized'));
+    }
     const errorInfo = resJson?.error || {};
     throw new ApiError(
       errorInfo.message || 'An unexpected error occurred',
