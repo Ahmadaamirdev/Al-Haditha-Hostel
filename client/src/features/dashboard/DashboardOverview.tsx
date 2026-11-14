@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { apiRequest } from '../../services/apiClient';
+import { subscribeToMutation } from '../../services/eventBus';
 import {
   Users,
   BedDouble,
@@ -85,11 +86,23 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
 
   useEffect(() => {
     loadDashboardData();
-    // Auto-refresh dashboard every 10 seconds silently to stay completely live
-    const interval = setInterval(() => {
+
+    // Event-driven update: refresh stats only when a mutation occurs
+    const unsubscribeAllotments = subscribeToMutation('allotments', () => {
       loadDashboardData({ skipCache: true });
-    }, 10000);
-    return () => clearInterval(interval);
+    });
+    const unsubscribeEmployees = subscribeToMutation('employees', () => {
+      loadDashboardData({ skipCache: true });
+    });
+    const unsubscribeBootcamps = subscribeToMutation('bootcamps', () => {
+      loadDashboardData({ skipCache: true });
+    });
+
+    return () => {
+      unsubscribeAllotments();
+      unsubscribeEmployees();
+      unsubscribeBootcamps();
+    };
   }, []);
 
   const handleManualRefresh = () => {

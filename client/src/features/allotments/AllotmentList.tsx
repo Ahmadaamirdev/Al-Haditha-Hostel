@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { apiRequest } from '../../services/apiClient';
+import { subscribeToMutation } from '../../services/eventBus';
 import { Allotment, Employee, AllocationUnit, EmployeeCategory } from '../../types';
 import { formatDate, formatUnitCode } from '../../utils';
 import {
@@ -64,13 +65,13 @@ export const AllotmentList: React.FC = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
-  // Live polling: update active stays every 15s in background
+  // Event-driven update: refresh table only when allotments/stays are mutated
   useEffect(() => {
-    const interval = setInterval(() => {
+    const unsubscribe = subscribeToMutation('allotments', () => {
       fetchActiveAllotments();
-    }, 15000);
-    return () => clearInterval(interval);
-  }, [search]);
+    });
+    return () => unsubscribe();
+  }, []);
 
   const openNewAllotmentModal = async () => {
     try {

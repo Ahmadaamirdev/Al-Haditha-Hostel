@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { apiRequest } from '../../services/apiClient';
+import { subscribeToMutation } from '../../services/eventBus';
 import { Allotment } from '../../types';
 import { formatDate } from '../../utils';
 import { History, Search, Clock, UserCheck } from 'lucide-react';
@@ -32,13 +33,13 @@ export const RecordsList: React.FC = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
-  // Live polling: update records periodically in background
+  // Event-driven update: refresh records only when allotments/checkout are mutated
   useEffect(() => {
-    const interval = setInterval(() => {
+    const unsubscribe = subscribeToMutation('records', () => {
       fetchRecords();
-    }, 15000);
-    return () => clearInterval(interval);
-  }, [search]);
+    });
+    return () => unsubscribe();
+  }, []);
 
   const filteredRecords = records.filter((item) => {
     if (filterCategory === 'ALL') return true;

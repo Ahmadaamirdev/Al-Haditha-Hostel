@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { apiRequest } from '../../services/apiClient';
+import { subscribeToMutation } from '../../services/eventBus';
 import { UserPlus, Users } from 'lucide-react';
 import { Employee, EmployeeCategory } from '../../types';
 
@@ -38,6 +39,14 @@ export const EmployeeList: React.FC = () => {
     }, 300);
     return () => clearTimeout(timer);
   }, [categoryFilter, search]);
+
+  // Event-driven update: refresh list when employees are created/modified
+  useEffect(() => {
+    const unsubscribe = subscribeToMutation('employees', () => {
+      fetchEmployees();
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleCreateEmployee = async (e: React.FormEvent) => {
     e.preventDefault();

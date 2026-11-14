@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { apiRequest } from '../../services/apiClient';
+import { subscribeToMutation } from '../../services/eventBus';
 import { Bootcamp, AllocationUnit, Allotment } from '../../types';
 import { formatUnitCode } from '../../utils';
 import { Building2, Search } from 'lucide-react';
@@ -57,6 +58,22 @@ export const BootcampList: React.FC = () => {
   useEffect(() => {
     fetchBootcamps();
     fetchAllotments();
+  }, [categoryFilter]);
+
+  // Event-driven update: refresh bootcamps when units or allotments change
+  useEffect(() => {
+    const unsubscribeAllotments = subscribeToMutation('allotments', () => {
+      fetchBootcamps();
+      fetchAllotments();
+    });
+    const unsubscribeBootcamps = subscribeToMutation('bootcamps', () => {
+      fetchBootcamps();
+      fetchAllotments();
+    });
+    return () => {
+      unsubscribeAllotments();
+      unsubscribeBootcamps();
+    };
   }, [categoryFilter]);
 
   // ── Allocate flow (triggered from IsoBootcamp bed click) ─────────────────

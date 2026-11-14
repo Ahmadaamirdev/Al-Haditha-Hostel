@@ -1,3 +1,5 @@
+import { notifyMutation } from './eventBus';
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
 export class ApiError extends Error {
@@ -105,7 +107,7 @@ export async function apiRequest<T>(
 
   const responseData = resJson.data as T;
 
-  // On successful mutations, invalidate relevant caches automatically
+  // On successful mutations, invalidate relevant caches and notify UI components
   if (!isGet) {
     if (endpoint.startsWith('/allotments')) {
       clearApiCache('/allotments');
@@ -113,14 +115,19 @@ export async function apiRequest<T>(
       clearApiCache('/bootcamps');
       clearApiCache('/employees');
       clearApiCache('/notifications');
+      notifyMutation('allotments');
+      notifyMutation('records');
     } else if (endpoint.startsWith('/employees')) {
       clearApiCache('/employees');
       clearApiCache('/stats');
+      notifyMutation('employees');
     } else if (endpoint.startsWith('/bootcamps')) {
       clearApiCache('/bootcamps');
       clearApiCache('/stats');
+      notifyMutation('bootcamps');
     } else {
       clearApiCache();
+      notifyMutation('all');
     }
   } else {
     // Store in cache if endpoint matches a cacheable pattern
