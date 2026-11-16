@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { apiRequest } from '../../services/apiClient';
+import { subscribeToMutation } from '../../services/eventBus';
 import { NotificationItem, NotificationType } from '../../types';
 import { formatDate, formatUnitCode } from '../../utils';
 import { Bell, AlertCircle, Clock, ShieldAlert } from 'lucide-react';
@@ -28,6 +29,11 @@ export const NotificationPanel: React.FC = () => {
 
   useEffect(() => {
     fetchNotifications();
+
+    const unsubscribe = subscribeToMutation('notifications', () => {
+      fetchNotifications();
+    });
+    return () => unsubscribe();
   }, []);
 
   return (

@@ -6,7 +6,7 @@
  * when data actually changes.
  */
 
-export type EntityType = 'allotments' | 'employees' | 'bootcamps' | 'records' | 'all';
+export type EntityType = 'allotments' | 'employees' | 'bootcamps' | 'records' | 'notifications' | 'all';
 
 type Listener = () => void;
 const listeners = new Map<EntityType, Set<Listener>>();

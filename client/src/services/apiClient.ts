@@ -117,6 +117,7 @@ export async function apiRequest<T>(
       clearApiCache('/notifications');
       notifyMutation('allotments');
       notifyMutation('records');
+      notifyMutation('notifications');
     } else if (endpoint.startsWith('/employees')) {
       clearApiCache('/employees');
       clearApiCache('/stats');
