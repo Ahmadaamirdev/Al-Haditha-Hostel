@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useAuth } from '../../features/auth/AuthContext';
-import { apiRequest } from '../../services/apiClient';
-import { subscribeToMutation } from '../../services/eventBus';
 import {
   LayoutDashboard,
   Users,
   Building2,
   CalendarCheck2,
   FileText,
-  Bell,
   LogOut,
   X,
 } from 'lucide-react';
@@ -28,25 +25,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onCloseMobile,
 }) => {
   const { logout } = useAuth();
-  const [unreadAlertsCount, setUnreadAlertsCount] = useState<number>(0);
-
-  const fetchAlertsCount = async () => {
-    try {
-      const res = await apiRequest<{ summary: { upcomingCount: number; dueTodayCount: number; overdueCount: number } }>('/notifications');
-      const total = (res?.summary?.overdueCount || 0) + (res?.summary?.dueTodayCount || 0) + (res?.summary?.upcomingCount || 0);
-      setUnreadAlertsCount(total);
-    } catch {
-      // silent
-    }
-  };
-
-  useEffect(() => {
-    fetchAlertsCount();
-    const unsubscribe = subscribeToMutation('notifications', () => {
-      fetchAlertsCount();
-    });
-    return () => unsubscribe();
-  }, []);
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -54,7 +32,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'allotments', label: 'Allotments', icon: CalendarCheck2 },
     { id: 'records', label: 'Records', icon: FileText },
     { id: 'bootcamps', label: 'Bootcamps', icon: Building2 },
-    { id: 'notifications', label: 'Notifications', icon: Bell, badge: unreadAlertsCount },
   ];
 
   return (
@@ -107,23 +84,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     onSelectTab(item.id);
                     onCloseMobile?.();
                   }}
-                  className={`w-full h-10 flex items-center justify-between px-3.5 rounded-[10px] text-[14px] font-medium transition duration-150 ${
+                  className={`w-full h-10 flex items-center gap-3 px-3.5 rounded-[10px] text-[14px] font-medium transition duration-150 ${
                     isActive
                       ? 'bg-[#00a651] text-white font-medium'
                       : 'text-slate-400 hover:text-white hover:bg-[#132844]'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <Icon className={`w-[18px] h-[18px] ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                    <span>{item.label}</span>
-                  </div>
-                  {item.badge !== undefined && item.badge > 0 && (
-                    <span className={`px-2 py-0.5 text-[11px] font-semibold rounded-full ${
-                      isActive ? 'bg-white text-[#00a651]' : 'bg-rose-500 text-white'
-                    }`}>
-                      {item.badge}
-                    </span>
-                  )}
+                  <Icon className={`w-[18px] h-[18px] ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                  <span>{item.label}</span>
                 </button>
               );
             })}
